@@ -1,14 +1,14 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container">
+    <div className="Home-container">
       <h1>Welcome to the Home Page</h1>
-      <button onClick={() => navigate("/signup")}>SIGNUP PAGE</button>
-      <button onClick={() => navigate("/login")}>LOGIN PAGE</button>
+      <button className="navigate-btn" onClick={() => navigate("/signup")}>SIGNUP PAGE</button>
+      <button className="navigate-btn" onClick={() => navigate("/login")}>LOGIN PAGE</button>
     </div>
   );
 };
