@@ -23,14 +23,17 @@ p {
   gap: 1rem;
   padding: 2rem;
 }
-.login-form{
+
+.login-form {
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   display: flex;
   flex-direction: column;
   gap: 2rem;
   padding: 2rem;
 }
-.signup-heading,.login-heading {
+
+.signup-heading,
+.login-heading {
   text-align: center;
   font-weight: 700;
   background-image: linear-gradient(to right, #2E3192, #1BFFFF);
@@ -75,9 +78,12 @@ p {
 .login-btn {
   cursor: pointer;
 }
-.Home-container{
+
+.Home-container {
   text-align: center;
 }
-.navigate-btn{
-  margin:2rem;
+
+.navigate-btn {
+  margin: 2rem;
+  padding: 0.5rem;
 }

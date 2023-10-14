@@ -6,7 +6,8 @@ const Home: React.FC = () => {
 
   return (
     <div className="Home-container">
-      <h1>Welcome to the Home Page</h1>
+      <h1>Welcome to the Polling App</h1>
+      <h2>Log In to your account</h2>
       <button className="navigate-btn" onClick={() => navigate("/signup")}>SIGNUP PAGE</button>
       <button className="navigate-btn" onClick={() => navigate("/login")}>LOGIN PAGE</button>
     </div>

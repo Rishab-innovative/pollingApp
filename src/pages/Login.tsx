@@ -50,7 +50,9 @@ const Login: React.FC = () => {
               </button>
               <div className="form-footer">
                 <p> Don't have an account yet ?</p>
-                <p onClick={() => navigate("/signup")} className="login-btn"><u>Create an account</u></p>
+                <p onClick={() => navigate("/signup")} className="login-btn">
+                  <u>Create an account</u>
+                </p>
               </div>
             </Form>
           </Col>
