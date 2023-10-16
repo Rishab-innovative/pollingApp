@@ -1,14 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
-import rootReducer from './Slice';
+import { configureStore } from "@reduxjs/toolkit";
+import SignUpSlice from "./Slice";
 
 export const store = configureStore({
-  reducer: rootReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredPaths: ['payload.dateTime'],
-      },
-    }),
+  reducer: SignUpSlice,
 });
 
 export type RootState = ReturnType<typeof store.getState>;

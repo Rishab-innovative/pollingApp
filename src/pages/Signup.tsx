@@ -7,6 +7,8 @@ import { fetchUserRoles } from "../redux/Slice";
 import { useSelector, useDispatch } from "react-redux";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AppDispatch } from "../redux/Store";
+import { addData } from "../redux/Slice";
+import axios from "axios";
 
 const SignUp: React.FC = () => {
   const [signUpFormData, setSignUpFormData] = useState({
@@ -14,11 +16,11 @@ const SignUp: React.FC = () => {
     lname: "",
     email: "",
     password: "",
-    role: "",
+    roleId: "",
   });
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>();
-  const userRole: [] = [];
+  const [passwordError, setPasswordError] = useState<boolean>(true);
   const checkLengthOfPassword = /.{8,}/;
   const upperCaseOfPassword = /[A-Z]/;
   const lowerCaseOfPassword = /[a-z]/;
@@ -34,40 +36,75 @@ const SignUp: React.FC = () => {
   );
 
   const dispatch = useDispatch<AppDispatch>();
-  const state = useSelector((state) => state);
-  console.log(state, "==dtat state");
-  
+  const userRole = useSelector((state: any) => state.data);
+  const userSignUpInfo = useSelector((state: any) => state);
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSignUpFormData({
       ...signUpFormData,
       [event.target.id]: event.target.value,
     });
+    setPasswordError(true);
   };
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSignUpFormData({
       ...signUpFormData,
       [event.target.id]: event.target.value,
     });
+    console.log(signUpFormData, "__id");
   };
   useEffect(() => {
     dispatch(fetchUserRoles());
-  }, [dispatch]);
-  // const handleSignUpSubmit =(event: React.ChangeEvent<HTMLInputElement>)=>{
-  //     event.preventDefault();
-  // }
+  }, []);
+  const handleSignUpSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (
+      !checkLengthOfPassword.test(signUpFormData.password) ||
+      !upperCaseOfPassword.test(signUpFormData.password) ||
+      !lowerCaseOfPassword.test(signUpFormData.password) ||
+      !digitOfPassword.test(signUpFormData.password) ||
+      !characterInPassword.test(signUpFormData.password)
+    ) {
+      setPasswordError(false);
+      return;
+    }
+
+    if (passwordError) {
+      const userData = {
+        fname: signUpFormData.fname,
+        lname: signUpFormData.lname,
+        email: signUpFormData.email,
+        password: signUpFormData.password,
+        roleId: signUpFormData.roleId,
+      };
+      dispatch(addData(userData));
+      console.log(userData, "--usedata");
+      postData(userData);
+    }
+  };
+  async function postData(data: any) {
+    try {
+      const response = await axios.post(
+        "https://pollapi.innotechteam.in/user/register",
+        data
+      );
+      console.log(response, "post response***");
+    } catch (error) {
+      console.error("An error occurred while making the POST request:", error);
+    }
+  }
   return (
     <div className="main-container">
       <Container>
         <Row className="justify-content-md-center">
           <Col md={6}>
-            <Form className="signup-form">
-              {/* <Form onSubmit={handleSignUpSubmit} className="signup-form"> */}
+            <Form onSubmit={handleSignUpSubmit} className="signup-form">
               <div className="signup-heading">
                 <p>SignUp Form</p>
               </div>
               <Form.Group>
                 <Form.Control
+                  id="fname"
                   required
                   size="lg"
                   type="text"
@@ -75,7 +112,6 @@ const SignUp: React.FC = () => {
                   onChange={handleInput}
                 />
               </Form.Group>
-
               <Form.Group>
                 <Form.Control
                   required
@@ -116,18 +152,24 @@ const SignUp: React.FC = () => {
                     />
                   </InputGroup.Text>
                 </InputGroup>
+                {passwordError ? null : (
+                  <p className="passwordError">
+                    Password must contain 8 letters including a number, 1 Upper
+                    & lower case and 1 special character.
+                  </p>
+                )}
               </Form.Group>
               <Form.Select
                 size="lg"
                 aria-label="Role"
-                id="role"
+                id="id"
                 required
                 onChange={handleSelect}
               >
                 <option>Select a Role</option>
-                <option value="Admin">ADMIN</option>
-                <option value="user">USER</option>
-                <option value="Hr">HR</option>
+                {userRole.map((item: any) => (
+                  <option value={item.id}>{item.name}</option>
+                ))}
               </Form.Select>
               <button type="submit" className="signup-btn">
                 Sign Up

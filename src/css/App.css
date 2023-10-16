@@ -74,6 +74,11 @@ p {
   font-family: Phantomsans, sans-serif;
 }
 
+.passwordError {
+  color: red;
+  font-size: 0.9rem;
+}
+
 .password-toggle-icon,
 .login-btn {
   cursor: pointer;
