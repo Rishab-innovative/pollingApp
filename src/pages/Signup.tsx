@@ -3,59 +3,64 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Container, InputGroup, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { fetchUserRoles } from "../redux/Slice";
+import { sendSignUpData, fetchUserRoles, addData } from "../redux/Slice";
 import { useSelector, useDispatch } from "react-redux";
+import { BiLoader } from "react-icons/bi";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AppDispatch } from "../redux/Store";
-import { addData } from "../redux/Slice";
-import axios from "axios";
 
 const SignUp: React.FC = () => {
+  const [showPassword, setShowPassword] = useState<boolean>();
   const [signUpFormData, setSignUpFormData] = useState({
-    fname: "",
-    lname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     roleId: "",
   });
-  const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState<boolean>();
-  const [passwordError, setPasswordError] = useState<boolean>(true);
+  const [inputFieldError, setInputFieldError] = useState({
+    passwordError: true,
+    nameError: "",
+  });
+
   const checkLengthOfPassword = /.{8,}/;
   const upperCaseOfPassword = /[A-Z]/;
   const lowerCaseOfPassword = /[a-z]/;
   const digitOfPassword = /\d/;
   const characterInPassword = /[!@#$%^&*]/;
-
-  const isLengthValid = checkLengthOfPassword.test(signUpFormData.password);
-  const isUppercaseValid = upperCaseOfPassword.test(signUpFormData.password);
-  const isLowercaseValid = lowerCaseOfPassword.test(signUpFormData.password);
-  const isDigitValid = digitOfPassword.test(signUpFormData.password);
-  const isSpecialCharacterValid = characterInPassword.test(
-    signUpFormData.password
-  );
-
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const userRole = useSelector((state: any) => state.data);
-  const userSignUpInfo = useSelector((state: any) => state);
+  const signUpInfo = useSelector((state: any) => state);
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSignUpFormData({
+    const updatedSignUpFormData = {
       ...signUpFormData,
       [event.target.id]: event.target.value,
+    };
+    let nameError = "";
+    if (updatedSignUpFormData.firstName.length < 5) {
+      nameError = "firstName";
+    } else if (updatedSignUpFormData.lastName.length < 5) {
+      nameError = "lastName";
+    }
+    setInputFieldError({
+      ...inputFieldError,
+      nameError: nameError,
+      passwordError: true,
     });
-    setPasswordError(true);
+    setSignUpFormData(updatedSignUpFormData);
   };
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSignUpFormData({
       ...signUpFormData,
-      [event.target.id]: event.target.value,
+      roleId: event.target.value,
     });
-    console.log(signUpFormData, "__id");
   };
   useEffect(() => {
     dispatch(fetchUserRoles());
   }, []);
+
   const handleSignUpSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (
@@ -65,34 +70,27 @@ const SignUp: React.FC = () => {
       !digitOfPassword.test(signUpFormData.password) ||
       !characterInPassword.test(signUpFormData.password)
     ) {
-      setPasswordError(false);
+      setInputFieldError({
+        ...inputFieldError,
+        passwordError: false,
+      });
       return;
     }
-
-    if (passwordError) {
+    if (inputFieldError.passwordError) {
       const userData = {
-        fname: signUpFormData.fname,
-        lname: signUpFormData.lname,
+        firstName: signUpFormData.firstName,
+        lastName: signUpFormData.lastName,
         email: signUpFormData.email,
         password: signUpFormData.password,
         roleId: signUpFormData.roleId,
       };
       dispatch(addData(userData));
-      console.log(userData, "--usedata");
-      postData(userData);
+      dispatch(sendSignUpData(userData));
+    }
+    if (!signUpInfo.isError && !signUpInfo.isLoading) {
+      navigate("/");
     }
   };
-  async function postData(data: any) {
-    try {
-      const response = await axios.post(
-        "https://pollapi.innotechteam.in/user/register",
-        data
-      );
-      console.log(response, "post response***");
-    } catch (error) {
-      console.error("An error occurred while making the POST request:", error);
-    }
-  }
   return (
     <div className="main-container">
       <Container>
@@ -104,25 +102,34 @@ const SignUp: React.FC = () => {
               </div>
               <Form.Group>
                 <Form.Control
-                  id="fname"
+                  id="firstName"
                   required
                   size="lg"
                   type="text"
                   placeholder="Enter First name"
                   onChange={handleInput}
                 />
+                {inputFieldError.nameError === "firstName" ? (
+                  <p className="passwordError">
+                    First name must contain 5 letters
+                  </p>
+                ) : null}
               </Form.Group>
               <Form.Group>
                 <Form.Control
                   required
-                  id="lname"
+                  id="lastName"
                   size="lg"
                   type="text"
                   placeholder="Enter Last name"
                   onChange={handleInput}
                 />
+                {inputFieldError.nameError === "lastName" ? (
+                  <p className="passwordError">
+                    Last name must contain 5 letters
+                  </p>
+                ) : null}
               </Form.Group>
-
               <Form.Group>
                 <Form.Control
                   required
@@ -132,8 +139,10 @@ const SignUp: React.FC = () => {
                   placeholder="Enter your email"
                   onChange={handleInput}
                 />
+                {signUpInfo.isError === true ? (
+                  <p className="emailError">Email is already registered.</p>
+                ) : null}
               </Form.Group>
-
               <Form.Group>
                 <InputGroup>
                   <Form.Control
@@ -152,7 +161,7 @@ const SignUp: React.FC = () => {
                     />
                   </InputGroup.Text>
                 </InputGroup>
-                {passwordError ? null : (
+                {inputFieldError.passwordError ? null : (
                   <p className="passwordError">
                     Password must contain 8 letters including a number, 1 Upper
                     & lower case and 1 special character.
@@ -168,12 +177,20 @@ const SignUp: React.FC = () => {
               >
                 <option>Select a Role</option>
                 {userRole.map((item: any) => (
-                  <option value={item.id}>{item.name}</option>
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
                 ))}
               </Form.Select>
-              <button type="submit" className="signup-btn">
-                Sign Up
-              </button>
+              {signUpInfo.isLoading === true ? (
+                <button disabled={true} className="signup-btn">
+                  <BiLoader />
+                </button>
+              ) : (
+                <button type="submit" className="signup-btn">
+                  Sign Up
+                </button>
+              )}
               <div className="form-footer">
                 <p>Already a Member ?</p>
                 <p onClick={() => navigate("/")} className="login-btn">
@@ -187,5 +204,4 @@ const SignUp: React.FC = () => {
     </div>
   );
 };
-
 export default SignUp;

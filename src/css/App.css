@@ -74,9 +74,16 @@ p {
   font-family: Phantomsans, sans-serif;
 }
 
-.passwordError {
+.passwordError,
+.emailError {
   color: red;
   font-size: 0.9rem;
+}
+
+.userError {
+  color: red;
+  font-size: 1.2rem;
+  margin: 5px 0 0 5px;
 }
 
 .password-toggle-icon,

@@ -1,17 +1,28 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const base_URL = "https://pollapi.innotechteam.in/";
 export const fetchUserRoles = createAsyncThunk("fetchUserRoles", async () => {
-  const response = await axios.get("https://pollapi.innotechteam.in/role/list");
+  const response = await axios.get(`${base_URL}role/list`);
   return response.data;
 });
-// interface SignUpData {
-//   fname: string;
-//   lname: String;
-//   email: string;
-//   password: string;
-//   role: String;
-// }
+
+export const sendSignUpData = createAsyncThunk(
+  "sendSignUpData",
+  async (data: any) => {
+    const response = await axios.post(`${base_URL}user/register`, data);
+    return response.data;
+  }
+);
+
+export const sendLoginData = createAsyncThunk(
+  "sendLoginData",
+  async (data: any) => {
+    const response = await axios.post(`${base_URL}user/login`, data);
+    return response.data;
+  }
+);
+
 interface SignUpState {
   isLoading: boolean;
   data: string | [];
@@ -32,7 +43,6 @@ const initialState: SignUpState = {
   data: [],
   isError: false,
 };
-
 const SignUpSlice = createSlice({
   name: "SignUpData",
   initialState,
@@ -54,8 +64,31 @@ const SignUpSlice = createSlice({
       state.data = action.payload;
     });
     builder.addCase(fetchUserRoles.rejected, (state, action) => {
-      console.log("unable to fetch data", action.payload);
       state.isError = true;
+    });
+
+    builder.addCase(sendSignUpData.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(sendSignUpData.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isError = false;
+    });
+    builder.addCase(sendSignUpData.rejected, (state) => {
+      state.isError = true;
+      state.isLoading = false;
+    });
+
+    builder.addCase(sendLoginData.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(sendLoginData.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isError = false;
+    });
+    builder.addCase(sendLoginData.rejected, (state, action) => {
+      state.isError = true;
+      state.isLoading = false;
     });
   },
 });
