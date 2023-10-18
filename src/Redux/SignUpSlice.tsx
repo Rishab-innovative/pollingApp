@@ -67,11 +67,13 @@ const SignUpSlice = createSlice({
     builder.addCase(signUpUserData.pending, (state) => {
       state.isLoading = true;
     });
+
     builder.addCase(signUpUserData.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isError = false;
       state.status = action.payload.status;
     });
+
     builder.addCase(signUpUserData.rejected, (state) => {
       state.isError = true;
       state.isLoading = false;

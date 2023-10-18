@@ -24,7 +24,7 @@ export const loginUserData = createAsyncThunk(
   "loginUserData",
   async (data: loginData) => {
     const response = await axios.post(`${base_URL}user/login`, data);
-    return response.data;
+    return response;
   }
 );
 const LoginSlice = createSlice({
@@ -35,12 +35,13 @@ const LoginSlice = createSlice({
     builder.addCase(loginUserData.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(loginUserData.fulfilled, (state) => {
+    builder.addCase(loginUserData.fulfilled, (state, action) => {
       state.isLoading = false;
     });
-    builder.addCase(loginUserData.rejected, (state) => {
+    builder.addCase(loginUserData.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
+      console.log(action, "jdbf");
     });
   },
 });

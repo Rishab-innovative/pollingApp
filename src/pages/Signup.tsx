@@ -25,13 +25,20 @@ const SignUp: React.FC = () => {
     passwordError: true,
     nameError: "",
     roleError: false,
+    emailError: false,
   });
   const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatchType>();
 
   const userRole = useSelector((state: RootState) => state.signUp);
-
+  const handleRedirectToLogin = () => {
+    navigate("/");
+    setInputFieldError({
+      ...inputFieldError,
+      emailError: false,
+    });
+  };
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const updatedSignUpFormData = {
       ...signUpFormData,
@@ -66,7 +73,9 @@ const SignUp: React.FC = () => {
     dispatch(fetchUserRoles());
   }, []);
 
-  const handleSignUpSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUpSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
     if (!passwordRegex.test(signUpFormData.password)) {
       setInputFieldError({
@@ -84,7 +93,7 @@ const SignUp: React.FC = () => {
       inputFieldError.passwordError &&
       signUpFormData.firstName.length >= 5 &&
       signUpFormData.lastName.length >= 5 &&
-      inputFieldError.roleError
+      !inputFieldError.roleError
     ) {
       const userData = {
         firstName: signUpFormData.firstName,
@@ -94,12 +103,18 @@ const SignUp: React.FC = () => {
         roleId: signUpFormData.roleId,
       };
       dispatch(addData(userData));
-      dispatch(signUpUserData(userData));
-      if (userRole.status == 200) {
+      const res = await dispatch(signUpUserData(userData));
+      if (res.payload) {
         setShowModal(true);
+      } else {
+        setInputFieldError({
+          ...inputFieldError,
+          emailError: true,
+        });
       }
     }
   };
+
   const handleSuccessSignUp = () => {
     navigate("/");
     setShowModal(false);
@@ -168,7 +183,7 @@ const SignUp: React.FC = () => {
                   placeholder="Enter your email"
                   onChange={handleInput}
                 />
-                {userRole.isError === true ? (
+                {inputFieldError.emailError === true ? (
                   <p className="emailError">Email is already registered.</p>
                 ) : null}
               </Form.Group>
@@ -225,7 +240,7 @@ const SignUp: React.FC = () => {
               )}
               <div className="form-footer">
                 <p>Already a Member ?</p>
-                <p onClick={() => navigate("/")} className="login-btn">
+                <p onClick={handleRedirectToLogin} className="login-btn">
                   <u>Log In</u>
                 </p>
               </div>
