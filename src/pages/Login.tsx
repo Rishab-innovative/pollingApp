@@ -3,9 +3,9 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { sendLoginData } from "../redux/Slice";
+import { loginUserData } from "../redux/LoginSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "../redux/Store";
+import { AppDispatchType, RootState } from "../redux/Store";
 import { BiLoader } from "react-icons/bi";
 
 const Login: React.FC = () => {
@@ -15,24 +15,22 @@ const Login: React.FC = () => {
     password: "",
   });
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatchType>();
   const navigate = useNavigate();
-  const LogInInfo = useSelector((state: any) => state);
-
+  const LogInInfo = useSelector((state: RootState) => state.logIn);
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({
       ...loginData,
       [event.target.id]: event.target.value,
     });
   };
-
   const handleSignUpSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const loginInputData = {
       email: loginData.email,
       password: loginData.password,
     };
-    dispatch(sendLoginData(loginInputData));
+    dispatch(loginUserData(loginInputData));
   };
   return (
     <div className="main-container">
@@ -45,6 +43,7 @@ const Login: React.FC = () => {
               </div>
               <Form.Group>
                 <Form.Control
+                  required
                   id="email"
                   type="email"
                   size="lg"
@@ -52,7 +51,6 @@ const Login: React.FC = () => {
                   onChange={handleInput}
                 />
               </Form.Group>
-
               <Form.Group>
                 <InputGroup>
                   <Form.Control
@@ -84,7 +82,6 @@ const Login: React.FC = () => {
                   Log In
                 </button>
               )}
-
               <div className="form-footer">
                 <p> Don't have an account yet ?</p>
                 <p onClick={() => navigate("/signup")} className="login-btn">
@@ -98,5 +95,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-
 export default Login;

@@ -1,9 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import SignUpSlice from "./Slice";
+import SignUpSlice from "./SignUpSlice";
+import LoginSlice from "./LoginSlice";
+import { combineReducers } from "@reduxjs/toolkit";
 
+const rootReducer = combineReducers({
+  signUp: SignUpSlice,
+  logIn: LoginSlice,
+});
 export const store = configureStore({
-  reducer: SignUpSlice,
+  reducer: rootReducer,
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatchType = typeof store.dispatch;

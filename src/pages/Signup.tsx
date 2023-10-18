@@ -3,13 +3,16 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Container, InputGroup, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { sendSignUpData, fetchUserRoles, addData } from "../redux/Slice";
+import { signUpUserData, fetchUserRoles, addData } from "../redux/SignUpSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { BiLoader } from "react-icons/bi";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { AppDispatch } from "../redux/Store";
+import { AppDispatchType, RootState } from "../redux/Store";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 const SignUp: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>();
   const [signUpFormData, setSignUpFormData] = useState({
     firstName: "",
@@ -21,17 +24,13 @@ const SignUp: React.FC = () => {
   const [inputFieldError, setInputFieldError] = useState({
     passwordError: true,
     nameError: "",
+    roleError: false,
   });
-
-  const checkLengthOfPassword = /.{8,}/;
-  const upperCaseOfPassword = /[A-Z]/;
-  const lowerCaseOfPassword = /[a-z]/;
-  const digitOfPassword = /\d/;
-  const characterInPassword = /[!@#$%^&*]/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const userRole = useSelector((state: any) => state.data);
-  const signUpInfo = useSelector((state: any) => state);
+  const dispatch = useDispatch<AppDispatchType>();
+
+  const userRole = useSelector((state: RootState) => state.signUp);
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const updatedSignUpFormData = {
@@ -51,32 +50,42 @@ const SignUp: React.FC = () => {
     });
     setSignUpFormData(updatedSignUpFormData);
   };
+
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSignUpFormData({
       ...signUpFormData,
       roleId: event.target.value,
     });
+    setInputFieldError({
+      ...inputFieldError,
+      roleError: false,
+    });
   };
+
   useEffect(() => {
     dispatch(fetchUserRoles());
   }, []);
 
   const handleSignUpSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (
-      !checkLengthOfPassword.test(signUpFormData.password) ||
-      !upperCaseOfPassword.test(signUpFormData.password) ||
-      !lowerCaseOfPassword.test(signUpFormData.password) ||
-      !digitOfPassword.test(signUpFormData.password) ||
-      !characterInPassword.test(signUpFormData.password)
-    ) {
+    if (!passwordRegex.test(signUpFormData.password)) {
       setInputFieldError({
         ...inputFieldError,
         passwordError: false,
       });
       return;
+    } else if (signUpFormData.roleId === "") {
+      setInputFieldError({
+        ...inputFieldError,
+        roleError: true,
+      });
     }
-    if (inputFieldError.passwordError) {
+    if (
+      inputFieldError.passwordError &&
+      signUpFormData.firstName.length >= 5 &&
+      signUpFormData.lastName.length >= 5 &&
+      inputFieldError.roleError
+    ) {
       const userData = {
         firstName: signUpFormData.firstName,
         lastName: signUpFormData.lastName,
@@ -85,14 +94,34 @@ const SignUp: React.FC = () => {
         roleId: signUpFormData.roleId,
       };
       dispatch(addData(userData));
-      dispatch(sendSignUpData(userData));
+      dispatch(signUpUserData(userData));
+      if (userRole.status == 200) {
+        setShowModal(true);
+      }
     }
-    if (!signUpInfo.isError && !signUpInfo.isLoading) {
-      navigate("/");
-    }
+  };
+  const handleSuccessSignUp = () => {
+    navigate("/");
+    setShowModal(false);
   };
   return (
     <div className="main-container">
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header>
+          <Modal.Title>You have successfully registered</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>This will redirect you to Login Page.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handleSuccessSignUp}>
+            OK
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Container>
         <Row className="justify-content-md-center">
           <Col md={6}>
@@ -139,7 +168,7 @@ const SignUp: React.FC = () => {
                   placeholder="Enter your email"
                   onChange={handleInput}
                 />
-                {signUpInfo.isError === true ? (
+                {userRole.isError === true ? (
                   <p className="emailError">Email is already registered.</p>
                 ) : null}
               </Form.Group>
@@ -169,20 +198,23 @@ const SignUp: React.FC = () => {
                 )}
               </Form.Group>
               <Form.Select
+                required
                 size="lg"
                 aria-label="Role"
                 id="id"
-                required
                 onChange={handleSelect}
               >
                 <option>Select a Role</option>
-                {userRole.map((item: any) => (
+                {userRole.data.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.name}
                   </option>
                 ))}
               </Form.Select>
-              {signUpInfo.isLoading === true ? (
+              {inputFieldError.roleError ? (
+                <p className="passwordError">Please select a role.</p>
+              ) : null}
+              {userRole.isLoading === true ? (
                 <button disabled={true} className="signup-btn">
                   <BiLoader />
                 </button>
