@@ -35,13 +35,12 @@ const LoginSlice = createSlice({
     builder.addCase(loginUserData.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(loginUserData.fulfilled, (state, action) => {
+    builder.addCase(loginUserData.fulfilled, (state) => {
       state.isLoading = false;
     });
-    builder.addCase(loginUserData.rejected, (state, action) => {
+    builder.addCase(loginUserData.rejected, (state) => {
       state.isLoading = false;
       state.isError = true;
-      console.log(action, "jdbf");
     });
   },
 });

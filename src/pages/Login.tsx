@@ -10,6 +10,7 @@ import { BiLoader } from "react-icons/bi";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>();
+  const [userNotFound, setUserNotFound] = useState<boolean>();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -18,26 +19,46 @@ const Login: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
   const navigate = useNavigate();
   const LogInInfo = useSelector((state: RootState) => state.logIn);
+  const [emptyEmailField, setEmptyEmailField] = useState<boolean>(false);
+  let emailInputError = false;
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({
       ...loginData,
       [event.target.id]: event.target.value,
     });
   };
-  const handleSignUpSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleBlur = () => {
+    const emailParts = loginData.email.split("@");
+    if (
+      emailParts.length !== 2 ||
+      emailParts[1].split(".").length !== 2 ||
+      emailParts[1].split(".")[1].length < 2
+    ) {
+      emailInputError = true;
+    }
+    setEmptyEmailField(emailInputError);
+  };
+  const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const loginInputData = {
       email: loginData.email,
       password: loginData.password,
     };
-    dispatch(loginUserData(loginInputData));
+
+    const res = await dispatch(loginUserData(loginInputData));
+    if (!res.payload) {
+      setUserNotFound(true);
+    } else if (res.payload) {
+      setUserNotFound(false);
+      navigate("/polling");
+    }
   };
   return (
     <div className="main-container">
       <Container>
         <Row className="justify-content-md-center">
           <Col md={6}>
-            <Form onSubmit={handleSignUpSubmit} className="login-form">
+            <Form onSubmit={handleLoginSubmit} className="login-form">
               <div className="login-heading">
                 <p>LOG IN NOW</p>
               </div>
@@ -49,7 +70,11 @@ const Login: React.FC = () => {
                   size="lg"
                   placeholder="Enter your email"
                   onChange={handleInput}
+                  onBlur={handleBlur}
                 />
+                {emptyEmailField ? (
+                  <p className="emailError">Enter a valid email id</p>
+                ) : null}
               </Form.Group>
               <Form.Group>
                 <InputGroup>
@@ -69,7 +94,7 @@ const Login: React.FC = () => {
                     />
                   </InputGroup.Text>
                 </InputGroup>
-                {LogInInfo.isError === true ? (
+                {userNotFound ? (
                   <p className="userError">User Not Found.</p>
                 ) : null}
               </Form.Group>

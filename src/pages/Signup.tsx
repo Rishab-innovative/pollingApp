@@ -10,7 +10,6 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AppDispatchType, RootState } from "../redux/Store";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-
 const SignUp: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>();
@@ -23,14 +22,15 @@ const SignUp: React.FC = () => {
   });
   const [inputFieldError, setInputFieldError] = useState({
     passwordError: true,
-    nameError: "",
+    firstNameError: "",
+    lastNameError: "",
     roleError: false,
     emailError: false,
+    emailInputError: false,
   });
   const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatchType>();
-
   const userRole = useSelector((state: RootState) => state.signUp);
   const handleRedirectToLogin = () => {
     navigate("/");
@@ -39,23 +39,49 @@ const SignUp: React.FC = () => {
       emailError: false,
     });
   };
+
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const updatedSignUpFormData = {
       ...signUpFormData,
       [event.target.id]: event.target.value,
     };
-    let nameError = "";
-    if (updatedSignUpFormData.firstName.length < 5) {
-      nameError = "firstName";
-    } else if (updatedSignUpFormData.lastName.length < 5) {
-      nameError = "lastName";
+    setSignUpFormData(updatedSignUpFormData);
+  };
+
+  let lname = "";
+  let fname = "";
+  let emailInputError = false;
+  let passError = true;
+  const handleBlur = (event: any) => {
+    if (event.target.id === "firstName") {
+      if (signUpFormData.firstName.length < 5) {
+        fname = "firstName";
+      }
+    } else if (event.target.id === "lastName") {
+      if (signUpFormData.lastName.length < 5) {
+        lname = "lastName";
+      }
+    } else if (event.target.id === "email") {
+      const emailParts = event.target.value.split("@");
+      if (
+        emailParts.length !== 2 ||
+        emailParts[1].split(".").length !== 2 ||
+        emailParts[1].split(".")[1].length < 2
+      ) {
+        emailInputError = true;
+      }
+    } else if (event.target.id === "password") {
+      if (!passwordRegex.test(signUpFormData.password)) {
+        passError = false;
+      }
     }
     setInputFieldError({
       ...inputFieldError,
-      nameError: nameError,
-      passwordError: true,
+      firstNameError: fname,
+      lastNameError: lname,
+      passwordError: passError,
+      emailInputError: emailInputError,
     });
-    setSignUpFormData(updatedSignUpFormData);
   };
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -114,7 +140,6 @@ const SignUp: React.FC = () => {
       }
     }
   };
-
   const handleSuccessSignUp = () => {
     navigate("/");
     setShowModal(false);
@@ -152,8 +177,9 @@ const SignUp: React.FC = () => {
                   type="text"
                   placeholder="Enter First name"
                   onChange={handleInput}
+                  onBlur={handleBlur}
                 />
-                {inputFieldError.nameError === "firstName" ? (
+                {inputFieldError.firstNameError === "firstName" ? (
                   <p className="passwordError">
                     First name must contain 5 letters
                   </p>
@@ -167,8 +193,9 @@ const SignUp: React.FC = () => {
                   type="text"
                   placeholder="Enter Last name"
                   onChange={handleInput}
+                  onBlur={handleBlur}
                 />
-                {inputFieldError.nameError === "lastName" ? (
+                {inputFieldError.lastNameError === "lastName" ? (
                   <p className="passwordError">
                     Last name must contain 5 letters
                   </p>
@@ -181,10 +208,13 @@ const SignUp: React.FC = () => {
                   size="lg"
                   type="email"
                   placeholder="Enter your email"
+                  onBlur={handleBlur}
                   onChange={handleInput}
                 />
                 {inputFieldError.emailError === true ? (
                   <p className="emailError">Email is already registered.</p>
+                ) : inputFieldError.emailInputError === true ? (
+                  <p className="emailError">Please enter a valid email ID.</p>
                 ) : null}
               </Form.Group>
               <Form.Group>
@@ -196,6 +226,7 @@ const SignUp: React.FC = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     onChange={handleInput}
+                    onBlur={handleBlur}
                   />
                   <InputGroup.Text>
                     <FontAwesomeIcon
