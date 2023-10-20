@@ -1,12 +1,12 @@
 import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { loginUserData } from "../redux/LoginSlice";
+import { loginUserData, removeLogInData } from "../redux/LoginSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";
-import { BiLoader } from "react-icons/bi";
+import Spinner from "react-bootstrap/Spinner";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>();
@@ -44,15 +44,25 @@ const Login: React.FC = () => {
       email: loginData.email,
       password: loginData.password,
     };
-
     const res = await dispatch(loginUserData(loginInputData));
     if (!res.payload) {
       setUserNotFound(true);
-    } else if (res.payload) {
-      setUserNotFound(false);
-      navigate("/polling");
     }
   };
+
+  useEffect(() => {
+    if (LogInInfo.user) {
+      setUserNotFound(false);
+      navigate("/polling");
+      const data: any = LogInInfo.user;
+      console.log(data, "9999");
+      localStorage.setItem("userToken", data.token);
+      localStorage.setItem("userName", data.user.firstName);
+      localStorage.setItem("userEmail", data.user.email);
+      dispatch(removeLogInData());
+    }
+  }, [LogInInfo]);
+
   return (
     <div className="main-container">
       <Container>
@@ -100,7 +110,9 @@ const Login: React.FC = () => {
               </Form.Group>
               {LogInInfo.isLoading === true ? (
                 <button disabled={true} className="signup-btn">
-                  <BiLoader />
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
                 </button>
               ) : (
                 <button type="submit" className="signup-btn">

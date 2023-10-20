@@ -10,12 +10,14 @@ export type LoginState = {
   password: string;
   isError: boolean;
   isLoading: boolean;
+  user: string;
 };
 const initialState: LoginState = {
   email: "",
   password: "",
   isLoading: false,
   isError: false,
+  user: "",
 };
 
 const base_URL = process.env.REACT_APP_BASE_URL;
@@ -30,13 +32,18 @@ export const loginUserData = createAsyncThunk(
 const LoginSlice = createSlice({
   name: "logIn",
   initialState,
-  reducers: {},
+  reducers: {
+    removeLogInData:(state)=>{
+      state.user="";
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(loginUserData.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(loginUserData.fulfilled, (state) => {
+    builder.addCase(loginUserData.fulfilled, (state, action: any) => {
       state.isLoading = false;
+      state.user = action.payload.data;
     });
     builder.addCase(loginUserData.rejected, (state) => {
       state.isLoading = false;
@@ -44,4 +51,5 @@ const LoginSlice = createSlice({
     });
   },
 });
+export const {removeLogInData}=LoginSlice.actions;
 export default LoginSlice.reducer;

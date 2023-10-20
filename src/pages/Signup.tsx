@@ -5,11 +5,12 @@ import { Form, Container, InputGroup, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { signUpUserData, fetchUserRoles, addData } from "../redux/SignUpSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { BiLoader } from "react-icons/bi";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AppDispatchType, RootState } from "../redux/Store";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import Spinner from "react-bootstrap/Spinner";
+
 const SignUp: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>();
@@ -262,7 +263,9 @@ const SignUp: React.FC = () => {
               ) : null}
               {userRole.isLoading === true ? (
                 <button disabled={true} className="signup-btn">
-                  <BiLoader />
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
                 </button>
               ) : (
                 <button type="submit" className="signup-btn">
