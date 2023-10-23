@@ -10,19 +10,21 @@ import { AppDispatchType, RootState } from "../redux/Store";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
-
 const SignUp: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>();
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>();
   const [signUpFormData, setSignUpFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
     roleId: "",
+    confirmPassword: "",
   });
   const [inputFieldError, setInputFieldError] = useState({
     passwordError: true,
+    confirmPassword: false,
     firstNameError: "",
     lastNameError: "",
     roleError: false,
@@ -40,19 +42,20 @@ const SignUp: React.FC = () => {
       emailError: false,
     });
   };
-
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const updatedSignUpFormData = {
-      ...signUpFormData,
-      [event.target.id]: event.target.value,
-    };
-    setSignUpFormData(updatedSignUpFormData);
+    if (!(event.target.value.trim() === "")) {
+      const updatedSignUpFormData = {
+        ...signUpFormData,
+        [event.target.id]: event.target.value,
+      };
+      setSignUpFormData(updatedSignUpFormData);
+    }
   };
-
   let lname = "";
   let fname = "";
   let emailInputError = false;
   let passError = true;
+  let confirmPassword = false;
   const handleBlur = (event: any) => {
     if (event.target.id === "firstName") {
       if (signUpFormData.firstName.length < 5) {
@@ -75,6 +78,10 @@ const SignUp: React.FC = () => {
       if (!passwordRegex.test(signUpFormData.password)) {
         passError = false;
       }
+    } else if (event.target.id === "confirmPassword") {
+      if (!(signUpFormData.confirmPassword === signUpFormData.password)) {
+        confirmPassword = true;
+      }
     }
     setInputFieldError({
       ...inputFieldError,
@@ -82,9 +89,9 @@ const SignUp: React.FC = () => {
       lastNameError: lname,
       passwordError: passError,
       emailInputError: emailInputError,
+      confirmPassword: confirmPassword,
     });
   };
-
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSignUpFormData({
       ...signUpFormData,
@@ -95,11 +102,9 @@ const SignUp: React.FC = () => {
       roleError: false,
     });
   };
-
   useEffect(() => {
     dispatch(fetchUserRoles());
   }, []);
-
   const handleSignUpSubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -243,6 +248,33 @@ const SignUp: React.FC = () => {
                     & lower case and 1 special character.
                   </p>
                 )}
+              </Form.Group>
+              <Form.Group>
+                <InputGroup>
+                  <Form.Control
+                    required
+                    id="confirmPassword"
+                    size="lg"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm password"
+                    onChange={handleInput}
+                    onBlur={handleBlur}
+                  />
+                  <InputGroup.Text>
+                    <FontAwesomeIcon
+                      icon={showConfirmPassword ? faEye : faEyeSlash}
+                      className="password-toggle-icon"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                    />
+                  </InputGroup.Text>
+                </InputGroup>
+                {inputFieldError.confirmPassword ? (
+                  <p className="passwordError">
+                    Confirm password is not same as password
+                  </p>
+                ) : null}
               </Form.Group>
               <Form.Select
                 required

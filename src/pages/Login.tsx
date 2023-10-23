@@ -55,10 +55,8 @@ const Login: React.FC = () => {
       setUserNotFound(false);
       navigate("/polling");
       const data: any = LogInInfo.user;
-      console.log(data, "9999");
+      localStorage.setItem("userData", JSON.stringify(data.user));
       localStorage.setItem("userToken", data.token);
-      localStorage.setItem("userName", data.user.firstName);
-      localStorage.setItem("userEmail", data.user.email);
       dispatch(removeLogInData());
     }
   }, [LogInInfo]);
