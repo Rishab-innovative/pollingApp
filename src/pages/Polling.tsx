@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -9,12 +10,25 @@ import { AppDispatchType, RootState } from "../redux/Store";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { Button } from "react-bootstrap";
 import Spinner from "react-bootstrap/Spinner";
-
 const Polling: React.FC = () => {
   const polls = useSelector((state: RootState) => state.pollList);
+  const [votedItems, setVotedItems] = useState<string[]>([]);
+  const [userRole,setUserRole]=useState<string>();
   const dispatch = useDispatch<AppDispatchType>();
   useEffect(() => {
     dispatch(fetchPollList());
+  }, []);
+  const handleVote = (itemTitle: string) => {
+    setVotedItems((prevVotedItems) => [...prevVotedItems, itemTitle]);
+  };
+  const isItemVoted = (itemTitle: string) => {
+    return votedItems.includes(itemTitle);
+  };
+  useEffect(() => {
+    const userDataFromLocalStorage = localStorage.getItem("userData");
+    if (userDataFromLocalStorage) {
+      setUserRole(JSON.parse(userDataFromLocalStorage).roleId);
+    }
   }, []);
   return (
     <>
@@ -36,7 +50,9 @@ const Polling: React.FC = () => {
               {item.optionList.map((option: any) => (
                 <ListGroup variant="flush" key={option.optionTitle}>
                   <ListGroup.Item>
-                    <Form.Check type={"checkbox"} label={option.optionTitle} />
+                    <Form.Check type={"checkbox"} label={option.optionTitle}
+                      onChange={() => handleVote(item.title)}
+                      disabled={isItemVoted(item.title)}/>
                   </ListGroup.Item>
                 </ListGroup>
               ))}

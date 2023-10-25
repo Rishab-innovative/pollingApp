@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
 interface loginData {
   email: string;
   password: string;
@@ -19,9 +18,7 @@ const initialState: LoginState = {
   isError: false,
   user: "",
 };
-
 const base_URL = process.env.REACT_APP_BASE_URL;
-
 export const loginUserData = createAsyncThunk(
   "loginUserData",
   async (data: loginData) => {

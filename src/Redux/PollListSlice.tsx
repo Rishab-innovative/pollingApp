@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
 const base_URL = process.env.REACT_APP_BASE_URL;
-const accessToken = localStorage.getItem("userToken");
 export const fetchPollList = createAsyncThunk("fetchPollList", async () => {
+  const accessToken: any = localStorage.getItem("userToken");
+  const parsedToken = JSON.parse(accessToken);
   try {
     const response = await axios.get(`${base_URL}poll/list/1?limit=4`, {
       headers: {
-        token: accessToken,
+        token: parsedToken,
       },
     });
     return response.data.rows;
@@ -15,19 +15,16 @@ export const fetchPollList = createAsyncThunk("fetchPollList", async () => {
     throw error;
   }
 });
-
 export type PollListState = {
   isLoading: boolean;
   data: string[];
   isError: boolean;
 };
-
 const initialState: PollListState = {
   isLoading: false,
   data: [],
   isError: false,
 };
-
 const PollListSlice = createSlice({
   name: "PollListData",
   initialState,
@@ -40,7 +37,6 @@ const PollListSlice = createSlice({
     builder.addCase(fetchPollList.pending, (state) => {
       state.isLoading = true;
     });
-
     builder.addCase(fetchPollList.rejected, (state) => {
       state.isLoading = true;
     });

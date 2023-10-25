@@ -7,7 +7,6 @@ import { loginUserData, removeLogInData } from "../redux/LoginSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";
 import Spinner from "react-bootstrap/Spinner";
-
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>();
   const [userNotFound, setUserNotFound] = useState<boolean>();
@@ -15,7 +14,6 @@ const Login: React.FC = () => {
     email: "",
     password: "",
   });
-
   const dispatch = useDispatch<AppDispatchType>();
   const navigate = useNavigate();
   const LogInInfo = useSelector((state: RootState) => state.logIn);
@@ -49,18 +47,16 @@ const Login: React.FC = () => {
       setUserNotFound(true);
     }
   };
-
   useEffect(() => {
     if (LogInInfo.user) {
       setUserNotFound(false);
       navigate("/polling");
       const data: any = LogInInfo.user;
       localStorage.setItem("userData", JSON.stringify(data.user));
-      localStorage.setItem("userToken", data.token);
+      localStorage.setItem("userToken", JSON.stringify(data.token));
       dispatch(removeLogInData());
     }
   }, [LogInInfo]);
-
   return (
     <div className="main-container">
       <Container>
