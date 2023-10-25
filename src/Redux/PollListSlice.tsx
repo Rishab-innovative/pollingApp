@@ -1,15 +1,22 @@
+import { useState } from "react";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+
 const base_URL = process.env.REACT_APP_BASE_URL;
+let pageNumber = 1;
 export const fetchPollList = createAsyncThunk("fetchPollList", async () => {
   const accessToken: any = localStorage.getItem("userToken");
   const parsedToken = JSON.parse(accessToken);
   try {
-    const response = await axios.get(`${base_URL}poll/list/1?limit=4`, {
-      headers: {
-        token: parsedToken,
-      },
-    });
+    const response = await axios.get(
+      `${base_URL}poll/list/${pageNumber}?limit=10`,
+      {
+        headers: {
+          token: parsedToken,
+        },
+      }
+    );
+    pageNumber += 1;
     return response.data.rows;
   } catch (error) {
     throw error;

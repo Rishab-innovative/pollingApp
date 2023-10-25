@@ -42,30 +42,25 @@ const Nav: React.FC = () => {
     localStorage.clear();
     navigate("/");
   };
-  console.log(loginUserData.role, "role000");
   return (
     <>
-      <Navbar className="bg-body-tertiary justify-content-between positon-relative">
+      <Navbar
+        className="justify-content-between positon-relative"
+        bg="dark"
+        data-bs-theme="dark"
+      >
         <div className="multi-btn">
           {loginUserData.role === 1 ? (
             <>
-              <Button variant="success" onClick={() => navigate("/polling")}>
-                Polls
-              </Button>
-              <Button variant="success" onClick={() => navigate("/addPoll")}>
-                Add Poll
-              </Button>
-              <Button variant="success" onClick={() => navigate("/createUser")}>
+              <Button onClick={() => navigate("/polling")}>Polls</Button>
+              <Button onClick={() => navigate("/addPoll")}>Add Poll</Button>
+              <Button onClick={() => navigate("/createUser")}>
                 Create User
               </Button>
-              <Button variant="success" onClick={() => navigate("/listUser")}>
-                List User
-              </Button>
+              <Button onClick={() => navigate("/listUser")}>List User</Button>
             </>
           ) : (
-            <Button variant="success" onClick={() => navigate("/addPoll")}>
-              Add Poll
-            </Button>
+            <Button onClick={() => navigate("/polling")}>Polls</Button>
           )}
         </div>
         <div className="hamburger-menu">
