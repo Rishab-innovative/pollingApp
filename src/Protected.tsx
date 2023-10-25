@@ -4,19 +4,20 @@ import { useNavigate } from "react-router-dom";
 
 interface ProtectedProps {
   Component: React.FC;
+  redirectTo: string;
 }
 
-const Protected: React.FC<ProtectedProps> = ({ Component }) => {
+const Protected: React.FC<ProtectedProps> = ({ Component, redirectTo }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
     let login = localStorage.getItem("userToken");
     if (login) {
-      navigate("/polling");
+      navigate(redirectTo); 
     } else {
       navigate("/");
     }
-  }, [navigate]);
+  }, [navigate, redirectTo]);
 
   return <Component />;
 };

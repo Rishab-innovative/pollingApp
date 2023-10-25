@@ -13,14 +13,35 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/polling" element={<Protected Component={Polling} />} />
-        <Route path="/addPoll" element={<AddPoll />} />
-        <Route path="/createUser" element={<CreateUser />} />
-        <Route path="/listUser" element={<ListUser />} />
+        <Route
+          path="/"
+          element={<Protected Component={Login} redirectTo="/polling" />}
+        />
+        <Route
+          path="/signup"
+          element={<Protected Component={SignUp} redirectTo="/polling" />}
+        />
+        <Route
+          path="/polling"
+          element={<Protected Component={Polling} redirectTo="/polling" />}
+        />
+        <Route
+          path="/addPoll"
+          element={<Protected Component={AddPoll} redirectTo="/addPoll" />}
+        />
+        <Route
+          path="/createUser"
+          element={
+            <Protected Component={CreateUser} redirectTo="/createUser" />
+          }
+        />
+        <Route
+          path="/listUser"
+          element={<Protected Component={ListUser} redirectTo="/listUser" />}
+        />
       </Routes>
     </BrowserRouter>
   );
 };
+
 export default App;
