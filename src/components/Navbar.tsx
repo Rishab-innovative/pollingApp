@@ -2,9 +2,12 @@ import Navbar from "react-bootstrap/Navbar";
 import { useEffect } from "react";
 import { useState } from "react";
 import "../css/App.css";
+import { NavLink } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 const Nav: React.FC = () => {
   interface data {
     firstName: string | null;
@@ -38,6 +41,19 @@ const Nav: React.FC = () => {
         : null,
     });
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (logOutModal && !event.target.closest(".avatar")) {
+        setLogOutModal(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [logOutModal]);
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
@@ -52,15 +68,23 @@ const Nav: React.FC = () => {
         <div className="multi-btn">
           {loginUserData.role === 1 ? (
             <>
-              <Button onClick={() => navigate("/polling")}>Polls</Button>
-              <Button onClick={() => navigate("/addPoll")}>Add Poll</Button>
-              <Button onClick={() => navigate("/createUser")}>
-                Create User
-              </Button>
-              <Button onClick={() => navigate("/listUser")}>List User</Button>
+              <NavLink to="/polling" active-ClassName="active">
+                <Button>Polls</Button>
+              </NavLink>
+              <NavLink to="/addPoll" active-ClassName="active">
+                <Button>Add Poll</Button>
+              </NavLink>
+              <NavLink to="/createUser" active-ClassName="active">
+                <Button>Create User</Button>
+              </NavLink>
+              <NavLink to="/listUser" active-ClassName="active">
+                <Button>List Use</Button>
+              </NavLink>
             </>
           ) : (
-            <Button onClick={() => navigate("/polling")}>Polls</Button>
+            <NavLink to="/polling" active-ClassName="active">
+              <Button>Polls</Button>
+            </NavLink>
           )}
         </div>
         <div className="hamburger-menu">

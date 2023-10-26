@@ -8,6 +8,7 @@ import Protected from "./Protected";
 import AddPoll from "./pages/AddPoll";
 import CreateUser from "./pages/CreateUser";
 import ListUser from "./pages/ListUser";
+import ViewPoll from "./pages/ViewPoll";
 
 const App: React.FC = () => {
   return (
@@ -19,7 +20,7 @@ const App: React.FC = () => {
         />
         <Route
           path="/signup"
-          element={<Protected Component={SignUp} redirectTo="/polling" />}
+          element={<Protected Component={SignUp} redirectTo="/signup" />}
         />
         <Route
           path="/polling"
@@ -34,6 +35,10 @@ const App: React.FC = () => {
           element={
             <Protected Component={CreateUser} redirectTo="/createUser" />
           }
+        />
+        <Route
+          path="/viewPoll"
+          element={<Protected Component={ViewPoll} redirectTo="/viewPoll" />}
         />
         <Route
           path="/listUser"
