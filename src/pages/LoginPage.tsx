@@ -1,21 +1,21 @@
 import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import "../css/LogInPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { loginUserData } from "../redux/LoginSlice";
+import { loginUserData, removeLogInData } from "../redux/LoginSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";
-import { BiLoader } from "react-icons/bi";
+import Spinner from "react-bootstrap/Spinner";
 
-const Login: React.FC = () => {
+const LoginPagePage: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>();
   const [userNotFound, setUserNotFound] = useState<boolean>();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
-
   const dispatch = useDispatch<AppDispatchType>();
   const navigate = useNavigate();
   const LogInInfo = useSelector((state: RootState) => state.logIn);
@@ -44,15 +44,21 @@ const Login: React.FC = () => {
       email: loginData.email,
       password: loginData.password,
     };
-
     const res = await dispatch(loginUserData(loginInputData));
     if (!res.payload) {
       setUserNotFound(true);
-    } else if (res.payload) {
-      setUserNotFound(false);
-      navigate("/polling");
     }
   };
+  useEffect(() => {
+    if (LogInInfo.user) {
+      setUserNotFound(false);
+      navigate("/polling");
+      const data: any = LogInInfo.user;
+      localStorage.setItem("userData", JSON.stringify(data.user));
+      localStorage.setItem("userToken", JSON.stringify(data.token));
+      dispatch(removeLogInData());
+    }
+  }, [LogInInfo]);
   return (
     <div className="main-container">
       <Container>
@@ -100,7 +106,9 @@ const Login: React.FC = () => {
               </Form.Group>
               {LogInInfo.isLoading === true ? (
                 <button disabled={true} className="signup-btn">
-                  <BiLoader />
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
                 </button>
               ) : (
                 <button type="submit" className="signup-btn">
@@ -120,4 +128,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-export default Login;
+export default LoginPagePage;

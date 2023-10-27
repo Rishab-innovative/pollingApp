@@ -1,0 +1,16 @@
+[
+    {
+        "label": "Polls",
+        "path": "/polling"
+    },
+    {
+        "label": "Add Polls",
+        "path": "/addPoll"
+    }, {
+        "label": "Create User",
+        "path": "/createUser"
+    }, {
+        "label": "List User",
+        "path": "/listUser"
+    }
+]

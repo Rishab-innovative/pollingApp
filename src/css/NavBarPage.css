@@ -1,0 +1,145 @@
+.multi-btn {
+    margin-left: 1rem;
+    gap: 0.5rem;
+    display: flex;
+}
+
+.userData {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+}
+
+.polling-heading {
+    color: white;
+}
+
+svg {
+    cursor: pointer;
+}
+
+.profile {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-right: 0.5rem;
+}
+
+.button,
+.avatar {
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 25px !important;
+}
+
+.btn-primary:hover {
+    background-color: rgb(0, 137, 167) !important
+}
+
+.logout-modal {
+    height: 100%;
+    width: 10%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    right: 0;
+    z-index: 5;
+    justify-content: center;
+    bottom: -73px;
+    background-color: rgba(122, 120, 120, 0.974);
+}
+
+.logout-modal button {
+    width: 70%;
+    margin: 0 !important;
+}
+
+.active {
+    background-color: rgb(0, 137, 167);
+    border-radius: 25px;
+}
+
+
+@media only screen and (max-width:929px) {
+    .logout-modal {
+        bottom: -100px;
+    }
+
+    .multi-btn {
+        display: none;
+    }
+
+    .userData {
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    .hamburger-menu {
+        margin-left: 1rem;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: white;
+    }
+
+    h3 {
+        font-size: 1rem !important;
+    }
+
+    .hamburger-menu-box {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        z-index: 2;
+        gap: 1rem;
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.809);
+    }
+}
+
+@media only screen and (max-width: 500px) and (min-width: 319px) {
+    h3 {
+        font-size: 0.6rem !important;
+    }
+
+    .hamburger-menu {
+        font-size: 1rem;
+    }
+
+    .logout-modal {
+        bottom: -55px;
+        width: 25%;
+        height: 110%;
+    }
+
+    .userData {
+        font-size: 0.6rem;
+    }
+
+    .avatar > img {
+        height: 25px;
+        width: 25px;
+    }
+
+    .card-title {
+        font-size: 0.8rem !important;
+        width: fit-content !important;
+    }
+
+    .logout-modal button {
+        width: 80%;
+        font-size: 0.7rem;
+    }
+}
+
+@media only screen and (min-width:930px) {
+    .hamburger-menu {
+        display: none;
+    }
+}
