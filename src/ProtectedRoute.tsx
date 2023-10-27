@@ -7,14 +7,17 @@ interface ProtectedProps {
   redirectTo: string;
 }
 
-const Protected: React.FC<ProtectedProps> = ({ Component, redirectTo }) => {
+const ProtectedRoute: React.FC<ProtectedProps> = ({
+  Component,
+  redirectTo,
+}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
     let login = localStorage.getItem("userToken");
     if (login) {
-      redirectTo==="/signup" ? navigate("/polling") : navigate(redirectTo);
-    } else if (!login && (redirectTo === "/signup")) {
+      redirectTo === "/signup" ? navigate("/polling") : navigate(redirectTo);
+    } else if (!login && redirectTo === "/signup") {
       navigate(redirectTo);
     } else {
       navigate("/");
@@ -24,4 +27,4 @@ const Protected: React.FC<ProtectedProps> = ({ Component, redirectTo }) => {
   return <Component />;
 };
 
-export default Protected;
+export default ProtectedRoute;

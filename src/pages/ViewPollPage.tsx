@@ -1,8 +1,6 @@
-import Navbar from "../components/Navbar";
-const ViewPoll: React.FC = () => {
+const ViewPollPage: React.FC = () => {
   return (
     <>
-      <Navbar />
       <div className="view-poll-container">
         <div className="poll-box">
           <div className="title">This is title</div>
@@ -12,4 +10,4 @@ const ViewPoll: React.FC = () => {
     </>
   );
 };
-export default ViewPoll;
+export default ViewPollPage;

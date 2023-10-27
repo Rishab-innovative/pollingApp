@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPollList } from "../redux/PollListSlice";
 import { useNavigate } from "react-router-dom";
+import "../css/PollListPage.css";
 import { AppDispatchType, RootState } from "../redux/Store";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { Button, Card, Form, ListGroup, Spinner } from "react-bootstrap";
-import Navbar from "../components/Navbar";
 import { BiExpand } from "react-icons/bi";
 
-const Polling: React.FC = () => {
+const PollingPage: React.FC = () => {
   const navigate = useNavigate();
   const polls = useSelector((state: RootState) => state.pollList);
   const [votedItems, setVotedItems] = useState<string[]>([]);
@@ -21,7 +21,6 @@ const Polling: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
 
   useEffect(() => {
-    console.log(number, "initial wala");
     dispatch(fetchPollList(number));
     const userDataFromLocalStorage = localStorage.getItem("userData");
     if (userDataFromLocalStorage) {
@@ -30,16 +29,12 @@ const Polling: React.FC = () => {
   }, [number]);
 
   useEffect(() => {
-    console.log(totalPolls, "inuseeffect");
     setTotalPolls((prevTotalPolls: any) => [...prevTotalPolls, ...polls.data]);
-    console.log(totalPolls, "inuseeffect");
   }, [polls.data]);
-  console.log(totalPolls, "justafter useeffect");
-  // useEffect(() => {
-  //   console.log(number, "inside load wala");
-  //   dispatch(fetchPollList(number));
-  // }, [number]);
 
+  const handleViewPoll = (id: number) => {
+    console.log(id, "chekc ID");
+  };
   const handleVote = (itemTitle: string) => {
     setVotedItems((prevVotedItems) => [...prevVotedItems, itemTitle]);
   };
@@ -61,11 +56,8 @@ const Polling: React.FC = () => {
       }));
     }
   };
-  console.log(totalPolls, "toa----");
   return (
     <>
-      <Navbar />
-
       {polls.isLoading === true ? (
         <Spinner
           animation="border"
@@ -86,9 +78,11 @@ const Polling: React.FC = () => {
                     <>
                       <AiFillEdit />
                       <AiFillDelete />
-                      <BiExpand onClick={()=>navigate("/viewPoll")}/>
+                      <BiExpand onClick={() => handleViewPoll(item.id)} />
                     </>
-                  ) : <BiExpand />}
+                  ) : (
+                    <BiExpand />
+                  )}
                 </Card.Title>
               </Card.Body>
               {item.optionList.map((option: any) => (
@@ -137,4 +131,4 @@ const Polling: React.FC = () => {
   );
 };
 
-export default Polling;
+export default PollingPage;

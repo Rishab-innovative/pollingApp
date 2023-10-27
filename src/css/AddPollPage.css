@@ -1,0 +1,12 @@
+.add-poll-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    gap: 1rem;
+  }
+  .add-title,
+.add-option {
+  margin-bottom: 1rem !important;
+}

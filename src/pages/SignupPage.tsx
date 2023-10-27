@@ -1,4 +1,5 @@
 import React from "react";
+import "../css/SignUpPage.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Container, InputGroup, Row, Col } from "react-bootstrap";
@@ -10,7 +11,8 @@ import { AppDispatchType, RootState } from "../redux/Store";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
-const SignUp: React.FC = () => {
+
+const SignUpPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>();
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>();
@@ -317,4 +319,4 @@ const SignUp: React.FC = () => {
     </div>
   );
 };
-export default SignUp;
+export default SignUpPage;

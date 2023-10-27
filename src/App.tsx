@@ -1,48 +1,75 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
-import SignUp from "./pages/Signup";
+import { useState } from "react";
+import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Polling from "./pages/Polling";
-import Protected from "./Protected";
-import AddPoll from "./pages/AddPoll";
-import CreateUser from "./pages/CreateUser";
-import ListUser from "./pages/ListUser";
-import ViewPoll from "./pages/ViewPoll";
+import { useDispatch, useSelector } from "react-redux";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignupPage";
+import PollingPage from "./pages/PollingPage";
+import ProtectedRoute from "./ProtectedRoute";
+import AddPollPage from "./pages/AddPollPage";
+import CreateUserPage from "./pages/CreateUserPage";
+import ListUserPage from "./pages/ListUserPage";
+import ViewPollPage from "./pages/ViewPollPage";
+import Navbar from "./components/Navbar";
 
 const App: React.FC = () => {
+  const [dataFromLocalStorage, setDataFromLocalStorage] = useState<any>();
+  const polls = useSelector((state: any) => state.pollList);
+  useEffect(() => {
+    const tempData: string | null = localStorage.getItem("userData");
+    const parsedData = JSON.parse(tempData as string);
+    setDataFromLocalStorage(parsedData);
+  }, [polls]);
   return (
     <BrowserRouter>
+      {polls?.size ? <Navbar /> : <></>}
       <Routes>
         <Route
           path="/"
-          element={<Protected Component={Login} redirectTo="/polling" />}
+          element={
+            <ProtectedRoute Component={LoginPage} redirectTo="/polling" />
+          }
         />
         <Route
           path="/signup"
-          element={<Protected Component={SignUp} redirectTo="/signup" />}
+          element={
+            <ProtectedRoute Component={SignUpPage} redirectTo="/signup" />
+          }
         />
         <Route
           path="/polling"
-          element={<Protected Component={Polling} redirectTo="/polling" />}
+          element={
+            <ProtectedRoute Component={PollingPage} redirectTo="/polling" />
+          }
         />
         <Route
           path="/addPoll"
-          element={<Protected Component={AddPoll} redirectTo="/addPoll" />}
+          element={
+            <ProtectedRoute Component={AddPollPage} redirectTo="/addPoll" />
+          }
         />
         <Route
           path="/createUser"
           element={
-            <Protected Component={CreateUser} redirectTo="/createUser" />
+            <ProtectedRoute
+              Component={CreateUserPage}
+              redirectTo="/createUser"
+            />
           }
         />
         <Route
           path="/viewPoll"
-          element={<Protected Component={ViewPoll} redirectTo="/viewPoll" />}
+          element={
+            <ProtectedRoute Component={ViewPollPage} redirectTo="/viewPoll" />
+          }
         />
         <Route
           path="/listUser"
-          element={<Protected Component={ListUser} redirectTo="/listUser" />}
+          element={
+            <ProtectedRoute Component={ListUserPage} redirectTo="/listUser" />
+          }
         />
       </Routes>
     </BrowserRouter>

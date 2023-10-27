@@ -30,9 +30,9 @@ const LoginSlice = createSlice({
   name: "logIn",
   initialState,
   reducers: {
-    removeLogInData:(state)=>{
-      state.user="";
-    }
+    removeLogInData: (state) => {
+      state.user = "";
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loginUserData.pending, (state) => {
@@ -48,5 +48,5 @@ const LoginSlice = createSlice({
     });
   },
 });
-export const {removeLogInData}=LoginSlice.actions;
+export const { removeLogInData } = LoginSlice.actions;
 export default LoginSlice.reducer;

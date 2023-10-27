@@ -1,5 +1,6 @@
 import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
+import "../css/LogInPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +8,8 @@ import { loginUserData, removeLogInData } from "../redux/LoginSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";
 import Spinner from "react-bootstrap/Spinner";
-const Login: React.FC = () => {
+
+const LoginPagePage: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>();
   const [userNotFound, setUserNotFound] = useState<boolean>();
   const [loginData, setLoginData] = useState({
@@ -126,4 +128,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-export default Login;
+export default LoginPagePage;

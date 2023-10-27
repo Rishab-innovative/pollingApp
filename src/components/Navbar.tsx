@@ -1,12 +1,14 @@
 import Navbar from "react-bootstrap/Navbar";
 import { useEffect } from "react";
 import { useState } from "react";
-import "../css/App.css";
+import "../css/NavBarPage.css";
 import { NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import { FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { emptyPollList } from "../redux/PollListSlice";
+import JsonDataNavBar from "./JsonDataNavBar.json";
 
 const Nav: React.FC = () => {
   interface data {
@@ -15,6 +17,7 @@ const Nav: React.FC = () => {
     email: string | null;
     role: number | null;
   }
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [hamburgerModal, setHamburgerModal] = useState<boolean>(false);
   const [logOutModal, setLogOutModal] = useState<boolean>(false);
@@ -25,20 +28,14 @@ const Nav: React.FC = () => {
     role: null,
   });
   useEffect(() => {
-    const userDataFromLocalStorage = localStorage.getItem("userData");
+    const userDataFromLocalStorage: string | null =
+      localStorage.getItem("userData");
+    const ParsedUserData = JSON.parse(userDataFromLocalStorage as string);
     setLoginUserData({
-      firstName: userDataFromLocalStorage
-        ? JSON.parse(userDataFromLocalStorage).firstName
-        : null,
-      lastName: userDataFromLocalStorage
-        ? JSON.parse(userDataFromLocalStorage).lastName
-        : null,
-      email: userDataFromLocalStorage
-        ? JSON.parse(userDataFromLocalStorage).email
-        : null,
-      role: userDataFromLocalStorage
-        ? JSON.parse(userDataFromLocalStorage).roleId
-        : null,
+      firstName: userDataFromLocalStorage ? ParsedUserData.firstName : null,
+      lastName: userDataFromLocalStorage ? ParsedUserData.lastName : null,
+      email: userDataFromLocalStorage ? ParsedUserData.email : null,
+      role: userDataFromLocalStorage ? ParsedUserData.roleId : null,
     });
   }, []);
 
@@ -56,8 +53,10 @@ const Nav: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.clear();
+    dispatch(emptyPollList());
     navigate("/");
   };
+
   return (
     <>
       <Navbar
@@ -68,18 +67,11 @@ const Nav: React.FC = () => {
         <div className="multi-btn">
           {loginUserData.role === 1 ? (
             <>
-              <NavLink to="/polling" active-ClassName="active">
-                <Button>Polls</Button>
-              </NavLink>
-              <NavLink to="/addPoll" active-ClassName="active">
-                <Button>Add Poll</Button>
-              </NavLink>
-              <NavLink to="/createUser" active-ClassName="active">
-                <Button>Create User</Button>
-              </NavLink>
-              <NavLink to="/listUser" active-ClassName="active">
-                <Button>List Use</Button>
-              </NavLink>
+              {JsonDataNavBar.map((items) => (
+                <NavLink to={items.path} active-ClassName="active">
+                  <Button>{items.label}</Button>
+                </NavLink>
+              ))}
             </>
           ) : (
             <NavLink to="/polling" active-ClassName="active">
@@ -93,30 +85,14 @@ const Nav: React.FC = () => {
             <div className="hamburger-menu-box">
               {loginUserData.role === 1 ? (
                 <>
-                  <Button
-                    variant="success"
-                    onClick={() => navigate("/polling")}
-                  >
-                    Polls
-                  </Button>
-                  <Button
-                    variant="success"
-                    onClick={() => navigate("/addPoll")}
-                  >
-                    Add Poll
-                  </Button>
-                  <Button
-                    variant="success"
-                    onClick={() => navigate("/createUser")}
-                  >
-                    Create User
-                  </Button>
-                  <Button
-                    variant="success"
-                    onClick={() => navigate("/listUser")}
-                  >
-                    List User
-                  </Button>
+                  {JsonDataNavBar.map((items) => (
+                    <Button
+                      variant="success"
+                      onClick={() => navigate(items.path)}
+                    >
+                      {items.label}
+                    </Button>
+                  ))}
                 </>
               ) : (
                 <Button variant="success" onClick={() => navigate("/polling")}>

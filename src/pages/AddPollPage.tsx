@@ -1,11 +1,10 @@
-import Navbar from "../components/Navbar";
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
+import "../css/AddPollPage.css";
 
-const AddPoll: React.FC = () => {
+const AddPollPage: React.FC = () => {
   return (
     <>
-      <Navbar />
       <div className="add-poll-container">
         <div className="form-add-title">
           <p className="add-title">Title</p>
@@ -23,4 +22,4 @@ const AddPoll: React.FC = () => {
     </>
   );
 };
-export default AddPoll;
+export default AddPollPage;
