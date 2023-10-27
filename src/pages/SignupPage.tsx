@@ -8,7 +8,6 @@ import { signUpUserData, fetchUserRoles, addData } from "../redux/SignUpSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AppDispatchType, RootState } from "../redux/Store";
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 
@@ -165,9 +164,16 @@ const SignUpPage: React.FC = () => {
         </Modal.Header>
         <Modal.Body>This will redirect you to Login Page.</Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={handleSuccessSignUp}>
+          <div className="success-signUp-btn" onClick={handleSuccessSignUp}>
+            Ok
+          </div>
+          {/* <Button
+            variant="success"
+            className="signUp"
+            onClick={handleSuccessSignUp}
+          >
             OK
-          </Button>
+          </Button> */}
         </Modal.Footer>
       </Modal>
       <Container>

@@ -2,8 +2,8 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useDispatch, useSelector } from "react-redux";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+// import { useSelector } from "react-redux";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignupPage";
 import PollingPage from "./pages/PollingPage";
@@ -15,16 +15,17 @@ import ViewPollPage from "./pages/ViewPollPage";
 import Navbar from "./components/Navbar";
 
 const App: React.FC = () => {
-  const [dataFromLocalStorage, setDataFromLocalStorage] = useState<any>();
-  const polls = useSelector((state: any) => state.pollList);
-  useEffect(() => {
-    const tempData: string | null = localStorage.getItem("userData");
-    const parsedData = JSON.parse(tempData as string);
-    setDataFromLocalStorage(parsedData);
-  }, [polls]);
+  // useEffect(() => {
+  //   const tempData: string | null = localStorage.getItem("userData");
+  //   const parsedData = JSON.parse(tempData as string);
+  //   console.log(localStorage, "loclastorga");
+  //   if (parsedData) {
+  //     console.log(parsedData, "aprsedTada");
+  //   }
+  // }, [localStorage.length]);
   return (
     <BrowserRouter>
-      {polls?.size ? <Navbar /> : <></>}
+      <Navbar />
       <Routes>
         <Route
           path="/"
