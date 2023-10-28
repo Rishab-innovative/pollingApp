@@ -2,7 +2,6 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-// import { useSelector } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignupPage";
@@ -15,14 +14,6 @@ import ViewPollPage from "./pages/ViewPollPage";
 import Navbar from "./components/Navbar";
 
 const App: React.FC = () => {
-  // useEffect(() => {
-  //   const tempData: string | null = localStorage.getItem("userData");
-  //   const parsedData = JSON.parse(tempData as string);
-  //   console.log(localStorage, "loclastorga");
-  //   if (parsedData) {
-  //     console.log(parsedData, "aprsedTada");
-  //   }
-  // }, [localStorage.length]);
   return (
     <BrowserRouter>
       <Navbar />

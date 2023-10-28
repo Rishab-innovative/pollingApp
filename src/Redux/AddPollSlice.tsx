@@ -1,67 +1,55 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+
 interface newPollData {
   title: string;
-  option: [];
+  options: { optionTitle: string }[];
 }
-export type LoginState = {
-  email: string;
-  password: string;
-  isError: boolean;
-  isLoading: boolean;
-  user: string;
+
+export type optionState = {
+  isSuccess: boolean;
 };
-const initialState: LoginState = {
-  email: "",
-  password: "",
-  isLoading: false,
-  isError: false,
-  user: "",
+const initialState: optionState = {
+  isSuccess: false,
 };
 const baseUrl = process.env.REACT_APP_BASE_URL;
 
 export const addNewPoll = createAsyncThunk(
   "addNewPoll",
-  async (number: number) => {
+  async (data: newPollData) => {
     const accessToken: string | null = localStorage.getItem("userToken");
     const parsedToken = JSON.parse(accessToken as string);
     try {
-      const response = await axios.get(
-        `${baseUrl}poll/list/${number}?limit=10`,
-        {
-          headers: {
-            token: parsedToken,
-          },
-        }
-      );
-      return response.data.rows;
+      const response = await axios.post(`${baseUrl}poll/add`, data, {
+        headers: {
+          token: parsedToken,
+        },
+      });
+      console.log(response, "rsposde  dede");
+      return response;
     } catch (error) {
       throw error;
     }
   }
 );
 
-const LoginSlice = createSlice({
-  name: "logIn",
+const addPollSlice = createSlice({
+  name: "addPollSlice",
   initialState,
   reducers: {
-    removeLogInData: (state) => {
-      state.user = "";
-    },
+    resetSuccess:(state)=>{
+      state.isSuccess=false;
+    }
   },
   extraReducers: (builder) => {
-    builder.addCase(addNewPoll.pending, (state) => {
-      state.isLoading = true;
+    builder.addCase(addNewPoll.rejected, () => {
+      console.log("there is a error in this code");
     });
-    builder.addCase(addNewPoll.fulfilled, (state, action: any) => {
-      state.isLoading = false;
-      state.user = action.payload.data;
-    });
-    builder.addCase(addNewPoll.rejected, (state) => {
-      state.isLoading = false;
-      state.isError = true;
+    builder.addCase(addNewPoll.fulfilled, (state) => {
+      console.log("inside Fulfilled slice of addPoll");
+      state.isSuccess = true;
     });
   },
 });
-export const { removeLogInData } = LoginSlice.actions;
-export default LoginSlice.reducer;
+export const { resetSuccess } = addPollSlice.actions;
+export default addPollSlice.reducer;

@@ -35,7 +35,7 @@ const Nav: React.FC = () => {
     const userDataFromLocalStorage: string | null =
       localStorage.getItem("userData");
     const ParsedUserData = JSON.parse(userDataFromLocalStorage as string);
-    
+
     if (userDataFromLocalStorage) {
       setLoginUserData({
         firstName: ParsedUserData.firstName,
@@ -85,13 +85,17 @@ const Nav: React.FC = () => {
             {loginUserData.role === 1 ? (
               <>
                 {JsonDataNavBar.map((items) => (
-                  <NavLink to={items.path} active-ClassName="active">
+                  <NavLink
+                    key={items.label}
+                    to={items.path}
+                    active-classname="active"
+                  >
                     <Button>{items.label}</Button>
                   </NavLink>
                 ))}
               </>
             ) : (
-              <NavLink to="/polling" active-ClassName="active">
+              <NavLink to="/polling" active-classname="active">
                 <Button>Polls</Button>
               </NavLink>
             )}

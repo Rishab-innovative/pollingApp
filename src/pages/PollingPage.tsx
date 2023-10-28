@@ -12,7 +12,7 @@ const PollingPage: React.FC = () => {
   const navigate = useNavigate();
   const polls = useSelector((state: RootState) => state.pollList);
   const [votedItems, setVotedItems] = useState<string[]>([]);
-  const [number, setNumber] = useState<number>(1);
+  const [pagenumber, setNumber] = useState<number>(1);
   const [userRole, setUserRole] = useState<number>();
   const [hasVotedMap, setHasVotedMap] = useState<{ [key: string]: boolean }>(
     {}
@@ -21,15 +21,23 @@ const PollingPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
 
   useEffect(() => {
-    dispatch(fetchPollList(number));
+    console.log("fetch polls and render on screen");
+    dispatch(fetchPollList(pagenumber));
     const userDataFromLocalStorage = localStorage.getItem("userData");
     if (userDataFromLocalStorage) {
       setUserRole(JSON.parse(userDataFromLocalStorage).roleId);
     }
-  }, [number]);
+  }, [pagenumber]);
 
   useEffect(() => {
-    setTotalPolls((prevTotalPolls: any) => [...prevTotalPolls, ...polls.data]);
+    if (pagenumber !== 1) {
+      setTotalPolls((prevTotalPolls: any) => [
+        ...prevTotalPolls,
+        ...polls.data,
+      ]);
+    } else {
+      setTotalPolls([...polls.data]);
+    }
   }, [polls.data]);
 
   const handleViewPoll = (id: number) => {
@@ -70,7 +78,7 @@ const PollingPage: React.FC = () => {
             <Button variant="success">Show Result</Button>
           ) : null}
           {totalPolls.map((item: any) => (
-            <Card key={item.title}>
+            <Card key={item.createdAt}>
               <Card.Body>
                 <Card.Title style={{ textAlign: "center" }}>
                   {item.title}
@@ -86,7 +94,7 @@ const PollingPage: React.FC = () => {
                 </Card.Title>
               </Card.Body>
               {item.optionList.map((option: any) => (
-                <ListGroup variant="flush" key={option.optionTitle}>
+                <ListGroup variant="flush" key={option.title}>
                   <ListGroup.Item>
                     <Form.Check
                       type={"checkbox"}
@@ -116,7 +124,7 @@ const PollingPage: React.FC = () => {
             <Button
               variant="success"
               className="showMore-btn"
-              onClick={() => setNumber(number + 1)}
+              onClick={() => setNumber(pagenumber + 1)}
             >
               Load More..
             </Button>
