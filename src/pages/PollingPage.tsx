@@ -9,12 +9,23 @@ import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { Button, Card, Form, ListGroup, Spinner } from "react-bootstrap";
 import { BiExpand } from "react-icons/bi";
 import { AiOutlineBarChart } from "react-icons/ai";
+import Modal from "react-bootstrap/Modal";
+
+interface DeletePollType {
+  id: number;
+  index: number;
+}
 const PollingPage: React.FC = () => {
   const navigate = useNavigate();
   const polls = useSelector((state: RootState) => state.pollList);
   const [votedItems, setVotedItems] = useState<string[]>([]);
   const [pagenumber, setNumber] = useState<number>(1);
   const [userRole, setUserRole] = useState<number>();
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [pollDeleteId, setPollDeleteId] = useState<DeletePollType>({
+    id: 0,
+    index: 0,
+  });
   const [hasVotedMap, setHasVotedMap] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -40,12 +51,23 @@ const PollingPage: React.FC = () => {
   const handleViewPoll = (id: number) => {
     navigate("/viewPoll");
   };
+
   const handleDelete = (id: number, index: number) => {
-    dispatch(DeletePollData(id));
-    const deletePoll = [...totalPolls];
-    deletePoll.splice(index, 1);
-    setTotalPolls([...deletePoll]);
+    setShowDeleteModal(true);
+    setPollDeleteId({
+      id: id,
+      index: index,
+    });
   };
+
+  const handleDeletePoll = () => {
+    dispatch(DeletePollData(pollDeleteId.id));
+    const deletePoll = [...totalPolls];
+    deletePoll.splice(pollDeleteId.index, 1);
+    setTotalPolls([...deletePoll]);
+    setShowDeleteModal(false);
+  };
+
   const handleVote = (itemTitle: string) => {
     setVotedItems((prevVotedItems) => [...prevVotedItems, itemTitle]);
   };
@@ -77,6 +99,29 @@ const PollingPage: React.FC = () => {
         />
       ) : (
         <div className="container" style={{ marginTop: "2rem" }}>
+          <Modal
+            show={showDeleteModal}
+            onHide={() => setShowDeleteModal(false)}
+            animation={false}
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+          >
+            <Modal.Header>
+              <Modal.Title>Delete Poll</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Confirm delete this poll</Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="success"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Close
+              </Button>
+              <Button variant="danger" onClick={handleDeletePoll}>
+                Delete
+              </Button>
+            </Modal.Footer>
+          </Modal>
           {totalPolls.map((item: any, index: number) => (
             <Card key={item.createdAt}>
               <Card.Body>
