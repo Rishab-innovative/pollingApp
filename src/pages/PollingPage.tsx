@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPollList } from "../redux/PollListSlice";
 import { useNavigate } from "react-router-dom";
 import "../css/PollListPage.css";
+import { DeletePollData } from "../redux/DeletePollSlice";
 import { AppDispatchType, RootState } from "../redux/Store";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { Button, Card, Form, ListGroup, Spinner } from "react-bootstrap";
 import { BiExpand } from "react-icons/bi";
-
+import { AiOutlineBarChart } from "react-icons/ai";
 const PollingPage: React.FC = () => {
   const navigate = useNavigate();
   const polls = useSelector((state: RootState) => state.pollList);
@@ -19,16 +20,13 @@ const PollingPage: React.FC = () => {
   );
   const [totalPolls, setTotalPolls] = useState<any>([]);
   const dispatch = useDispatch<AppDispatchType>();
-
   useEffect(() => {
-    console.log("fetch polls and render on screen");
     dispatch(fetchPollList(pagenumber));
     const userDataFromLocalStorage = localStorage.getItem("userData");
     if (userDataFromLocalStorage) {
       setUserRole(JSON.parse(userDataFromLocalStorage).roleId);
     }
   }, [pagenumber]);
-
   useEffect(() => {
     if (pagenumber !== 1) {
       setTotalPolls((prevTotalPolls: any) => [
@@ -39,9 +37,14 @@ const PollingPage: React.FC = () => {
       setTotalPolls([...polls.data]);
     }
   }, [polls.data]);
-
   const handleViewPoll = (id: number) => {
-    console.log(id, "chekc ID");
+    navigate("/viewPoll");
+  };
+  const handleDelete = (id: number, index: number) => {
+    dispatch(DeletePollData(id));
+    const deletePoll = [...totalPolls];
+    deletePoll.splice(index, 1);
+    setTotalPolls([...deletePoll]);
   };
   const handleVote = (itemTitle: string) => {
     setVotedItems((prevVotedItems) => [...prevVotedItems, itemTitle]);
@@ -74,19 +77,19 @@ const PollingPage: React.FC = () => {
         />
       ) : (
         <div className="container" style={{ marginTop: "2rem" }}>
-          {userRole === 1 ? (
-            <Button variant="success">Show Result</Button>
-          ) : null}
-          {totalPolls.map((item: any) => (
+          {totalPolls.map((item: any, index: number) => (
             <Card key={item.createdAt}>
               <Card.Body>
                 <Card.Title style={{ textAlign: "center" }}>
                   {item.title}
                   {userRole === 1 ? (
                     <>
-                      <AiFillEdit />
-                      <AiFillDelete />
+                      <AiFillEdit onClick={() => navigate("/editPoll")} />
+                      <AiFillDelete
+                        onClick={() => handleDelete(item.id, index)}
+                      />
                       <BiExpand onClick={() => handleViewPoll(item.id)} />
+                      <AiOutlineBarChart />
                     </>
                   ) : (
                     <BiExpand />
@@ -138,5 +141,4 @@ const PollingPage: React.FC = () => {
     </>
   );
 };
-
 export default PollingPage;

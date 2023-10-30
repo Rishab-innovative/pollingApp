@@ -8,9 +8,11 @@ interface newPollData {
 
 export type optionState = {
   isSuccess: boolean;
+  isLoading: boolean;
 };
 const initialState: optionState = {
   isSuccess: false,
+  isLoading: false,
 };
 const baseUrl = process.env.REACT_APP_BASE_URL;
 
@@ -25,7 +27,6 @@ export const addNewPoll = createAsyncThunk(
           token: parsedToken,
         },
       });
-      console.log(response, "rsposde  dede");
       return response;
     } catch (error) {
       throw error;
@@ -37,17 +38,17 @@ const addPollSlice = createSlice({
   name: "addPollSlice",
   initialState,
   reducers: {
-    resetSuccess:(state)=>{
-      state.isSuccess=false;
-    }
+    resetSuccess: (state) => {
+      state.isSuccess = false;
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(addNewPoll.rejected, () => {
-      console.log("there is a error in this code");
+    builder.addCase(addNewPoll.pending, (state) => {
+      state.isLoading = true;
     });
     builder.addCase(addNewPoll.fulfilled, (state) => {
-      console.log("inside Fulfilled slice of addPoll");
       state.isSuccess = true;
+      state.isLoading = false;
     });
   },
 });

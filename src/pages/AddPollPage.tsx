@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { AppDispatchType, RootState } from "../redux/Store";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import Modal from "react-bootstrap/Modal";
+import Spinner from "react-bootstrap/Spinner";
 
 interface PollData {
   title: string;
@@ -32,18 +33,15 @@ const AddPollPage: React.FC = () => {
     optionError: false,
     optionSize: false,
   });
-
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatchType>();
   const addPollInfo = useSelector((state: RootState) => state.addPoll);
-
   useEffect(() => {
     if (addPollInfo.isSuccess === true) {
       setShowModal(true);
       dispatch(resetSuccess());
     }
   }, [addPollInfo.isSuccess]);
-
   const handleSubmit = () => {
     if (addNewPollData.title.length < 9) {
       setErrorMessage({
@@ -61,22 +59,18 @@ const AddPollPage: React.FC = () => {
   };
   const handleEdit = (index: number) => {
     const optionToEdit = addNewPollData.options[index];
-    console.log(optionToEdit.optionTitle, "opopo");
-    setAddNewPollData({
+    const updatedEdit = {
       ...addNewPollData,
       option: optionToEdit.optionTitle,
-    });
-    console.log(addNewPollData.option, "tetstet");
-
+    };
+    setAddNewPollData(updatedEdit);
     const updatedOptions = [...addNewPollData.options];
     updatedOptions.splice(index, 1);
-
     setAddNewPollData({
-      ...addNewPollData,
+      ...updatedEdit,
       options: updatedOptions,
     });
   };
-
   const handleDeleteOption = (index: number) => {
     const updatedOptions = [...addNewPollData.options];
     updatedOptions.splice(index, 1);
@@ -85,7 +79,6 @@ const AddPollPage: React.FC = () => {
       options: updatedOptions,
     });
   };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const key = e.target.id;
@@ -97,10 +90,10 @@ const AddPollPage: React.FC = () => {
       setErrorMessage({
         ...errorMessage,
         optionError: false,
+        optionSize: false,
       });
     }
   };
-
   const handleAddOptions = () => {
     if (addNewPollData.option.trim() === "") {
       setErrorMessage({
@@ -124,7 +117,6 @@ const AddPollPage: React.FC = () => {
     navigate("/polling");
     setShowModal(false);
   };
-
   return (
     <div className="wrapper">
       <Modal
@@ -138,7 +130,7 @@ const AddPollPage: React.FC = () => {
         </Modal.Header>
         <Modal.Body>This will redirect you to Polling Page.</Modal.Body>
         <Modal.Footer>
-          <div className="success-signUp-btn" onClick={handleSuccessAddPoll}>
+          <div className="success-AddPoll-btn" onClick={handleSuccessAddPoll}>
             Ok
           </div>
         </Modal.Footer>
@@ -178,7 +170,6 @@ const AddPollPage: React.FC = () => {
             </span>
           ))}
         </div>
-
         {errorMessage.optionError ? (
           <p style={{ color: "red" }}>Please enter a option</p>
         ) : null}
@@ -186,9 +177,17 @@ const AddPollPage: React.FC = () => {
           <p style={{ color: "red" }}>add at least 3 options</p>
         ) : null}
         <div className="button-wrapper">
-          <button className="addPoll-submit-btn" onClick={handleSubmit}>
-            Submit
-          </button>
+          {addPollInfo.isLoading === true ? (
+            <button disabled={true} className="addPoll-submit-btn">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </button>
+          ) : (
+            <button className="addPoll-submit-btn" onClick={handleSubmit}>
+              Submit
+            </button>
+          )}
           <button
             className="addPoll-submit-btn"
             onClick={() => navigate("/polling")}
