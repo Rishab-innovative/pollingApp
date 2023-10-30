@@ -1,18 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export type LoginState = {
+export type DeleteState = {
   isError: boolean;
 };
-const initialState: LoginState = {
+const initialState: DeleteState = {
   isError: false,
 };
 const baseUrl = process.env.REACT_APP_BASE_URL;
 export const DeletePollData = createAsyncThunk(
   "loginUserData",
   async (id: number) => {
-    const response = await axios.post(`${baseUrl}user/login`, id);
-    return response;
+    console.log(id);
+    const accessToken: string | null = localStorage.getItem("userToken");
+    const parsedToken = JSON.parse(accessToken as string);
+    try {
+      const response = await axios.delete(`${baseUrl}poll/${id}`, {
+        headers: {
+          token: parsedToken,
+        },
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 );
 const DeletePollSlice = createSlice({
