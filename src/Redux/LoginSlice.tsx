@@ -5,24 +5,18 @@ interface loginData {
   password: string;
 }
 export type LoginState = {
-  email: string;
-  password: string;
-  isError: boolean;
   isLoading: boolean;
   user: string;
 };
 const initialState: LoginState = {
-  email: "",
-  password: "",
   isLoading: false,
-  isError: false,
   user: "",
 };
-const base_URL = process.env.REACT_APP_BASE_URL;
+const baseUrl = process.env.REACT_APP_BASE_URL;
 export const loginUserData = createAsyncThunk(
   "loginUserData",
   async (data: loginData) => {
-    const response = await axios.post(`${base_URL}user/login`, data);
+    const response = await axios.post(`${baseUrl}user/login`, data);
     return response;
   }
 );
@@ -44,7 +38,6 @@ const LoginSlice = createSlice({
     });
     builder.addCase(loginUserData.rejected, (state) => {
       state.isLoading = false;
-      state.isError = true;
     });
   },
 });

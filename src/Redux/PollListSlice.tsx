@@ -21,7 +21,7 @@ export const fetchPollList = createAsyncThunk(
       throw error;
     }
   }
-);
+);  
 export type PollListState = {
   isLoading: boolean;
   data: string[];

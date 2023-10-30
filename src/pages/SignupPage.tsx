@@ -167,13 +167,6 @@ const SignUpPage: React.FC = () => {
           <div className="success-signUp-btn" onClick={handleSuccessSignUp}>
             Ok
           </div>
-          {/* <Button
-            variant="success"
-            className="signUp"
-            onClick={handleSuccessSignUp}
-          >
-            OK
-          </Button> */}
         </Modal.Footer>
       </Modal>
       <Container>

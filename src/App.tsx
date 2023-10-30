@@ -2,7 +2,6 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-// import { useSelector } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignupPage";
@@ -12,17 +11,9 @@ import AddPollPage from "./pages/AddPollPage";
 import CreateUserPage from "./pages/CreateUserPage";
 import ListUserPage from "./pages/ListUserPage";
 import ViewPollPage from "./pages/ViewPollPage";
+// import EditPollPage from "./pages/EditPollPage";
 import Navbar from "./components/Navbar";
-
 const App: React.FC = () => {
-  // useEffect(() => {
-  //   const tempData: string | null = localStorage.getItem("userData");
-  //   const parsedData = JSON.parse(tempData as string);
-  //   console.log(localStorage, "loclastorga");
-  //   if (parsedData) {
-  //     console.log(parsedData, "aprsedTada");
-  //   }
-  // }, [localStorage.length]);
   return (
     <BrowserRouter>
       <Navbar />
@@ -60,6 +51,15 @@ const App: React.FC = () => {
             />
           }
         />
+            {/* <Route
+          path="/editPoll"
+          element={
+            <ProtectedRoute
+              Component={EditPollPage}
+              redirectTo="/editPoll"
+            />
+          }
+        /> */}
         <Route
           path="/viewPoll"
           element={
@@ -76,5 +76,4 @@ const App: React.FC = () => {
     </BrowserRouter>
   );
 };
-
 export default App;

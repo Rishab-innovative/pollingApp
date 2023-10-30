@@ -3,7 +3,16 @@
   padding: 0;
   box-sizing: border-box;
 }
-
-p {
-  margin-bottom: 0 !important;
+.view-poll-container{
+  width:40vw;
+}
+.card-header{
+  font-size:1.5rem;
+}
+.createPage-main-container{
+  height: 92.1vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(to right, #2E3192, #1BFFFF);
 }
