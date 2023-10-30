@@ -11,7 +11,7 @@ import AddPollPage from "./pages/AddPollPage";
 import CreateUserPage from "./pages/CreateUserPage";
 import ListUserPage from "./pages/ListUserPage";
 import ViewPollPage from "./pages/ViewPollPage";
-// import EditPollPage from "./pages/EditPollPage";
+import EditPollPage from "./pages/EditPollPage";
 import Navbar from "./components/Navbar";
 const App: React.FC = () => {
   return (
@@ -51,15 +51,12 @@ const App: React.FC = () => {
             />
           }
         />
-            {/* <Route
+        <Route
           path="/editPoll"
           element={
-            <ProtectedRoute
-              Component={EditPollPage}
-              redirectTo="/editPoll"
-            />
+            <ProtectedRoute Component={EditPollPage} redirectTo="/editPoll" />
           }
-        /> */}
+        />
         <Route
           path="/viewPoll"
           element={

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPollList } from "../redux/PollListSlice";
+import { fetchPollList, addId } from "../redux/PollListSlice";
 import { useNavigate } from "react-router-dom";
 import "../css/PollListPage.css";
 import { DeletePollData } from "../redux/DeletePollSlice";
@@ -89,6 +89,10 @@ const PollingPage: React.FC = () => {
       }));
     }
   };
+  const handleEditPoll = (id: number) => {
+    navigate("/editPoll");
+    dispatch(addId(id));
+  };
   return (
     <>
       {polls.isLoading === true ? (
@@ -129,7 +133,7 @@ const PollingPage: React.FC = () => {
                   {item.title}
                   {userRole === 1 ? (
                     <>
-                      <AiFillEdit onClick={() => navigate("/editPoll")} />
+                      <AiFillEdit onClick={() => handleEditPoll(item.id)} />
                       <AiFillDelete
                         onClick={() => handleDelete(item.id, index)}
                       />

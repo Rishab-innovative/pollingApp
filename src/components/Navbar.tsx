@@ -5,6 +5,7 @@ import "../css/NavBarPage.css";
 import { NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
+import { addId } from "../redux/PollListSlice";
 import { FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { emptyPollList } from "../redux/PollListSlice";
@@ -67,12 +68,18 @@ const Nav: React.FC = () => {
     };
   }, [logOutModal]);
 
+  useEffect(() => {
+    if (window.location.pathname === "/addPoll") {
+      console.log("insideIF");
+      dispatch(addId(0));
+    }
+  }, [window.location.pathname]);
+
   const handleLogout = () => {
     localStorage.clear();
     dispatch(emptyPollList());
     navigate("/");
   };
-
   return (
     <>
       {loginUserData && loginUserData?.id ? (
