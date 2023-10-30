@@ -92,6 +92,11 @@ const AddPollPage: React.FC = () => {
         optionError: false,
         optionSize: false,
       });
+    } else if (key === "title") {
+      setErrorMessage({
+        ...errorMessage,
+        titleError: false,
+      });
     }
   };
   const handleAddOptions = () => {
@@ -116,6 +121,11 @@ const AddPollPage: React.FC = () => {
   const handleSuccessAddPoll = () => {
     navigate("/polling");
     setShowModal(false);
+  };
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleAddOptions();
+    }
   };
   return (
     <div className="wrapper">
@@ -155,6 +165,7 @@ const AddPollPage: React.FC = () => {
               onChange={handleChange}
               value={addNewPollData.option}
               placeholder="Enter Option"
+              onKeyPress={handleKeyPress}
             />
             <InputGroup.Text>
               <AiOutlinePlus onClick={handleAddOptions} />
