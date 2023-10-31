@@ -70,7 +70,6 @@ const Nav: React.FC = () => {
 
   useEffect(() => {
     if (window.location.pathname === "/addPoll") {
-      console.log("insideIF");
       dispatch(addId(0));
     }
   }, [window.location.pathname]);

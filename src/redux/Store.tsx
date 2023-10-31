@@ -3,6 +3,7 @@ import SignUpSlice from "./SignUpSlice";
 import LoginSlice from "./LoginSlice";
 import PollListSlice from "./PollListSlice";
 import addPollSlice from "./AddPollSlice";
+import editPollSlice from "./EditPollSlice";
 import { combineReducers } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   logIn: LoginSlice,
   pollList: PollListSlice,
   addPoll: addPollSlice,
+  editPoll:editPollSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

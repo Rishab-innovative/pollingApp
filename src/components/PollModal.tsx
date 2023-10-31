@@ -11,13 +11,18 @@ import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import { editPollTitle, editPollOptions } from "../redux/EditPollSlice";
-// import { editPollTitle } from "../redux/EditPollSlice";
+import { DeleteOptionData } from "../redux/DeleteOptionSlice";
 
 interface PollData {
   title: string;
   option: { optionTitle: string; id: number | null };
   options: { optionTitle: string; id: number | null }[];
   id: number | null;
+}
+interface EditedPolltype{
+title:string;
+idOfPoll:any;
+createdBy:number;
 }
 interface MessageError {
   titleError: boolean;
@@ -45,8 +50,10 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatchType>();
-  const getIdOfPoll = useSelector((state: RootState) => state.pollList);
+  const getIdOfPoll = useSelector((state: RootState) => state.pollList.id);
   const addPollInfo = useSelector((state: RootState) => state.addPoll);
+  const editedPollInfo = useSelector((state: RootState) => state.editPoll);
+
 
   useEffect(() => {
     if (addPollInfo.isSuccess === true) {
@@ -54,6 +61,12 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
       dispatch(resetSuccess());
     }
   }, [addPollInfo.isSuccess]);
+  useEffect(() => {
+    if (editedPollInfo.titleUpdateSuccess === true) {
+      setShowModal(true);
+    }
+  }, [editedPollInfo.titleUpdateSuccess]);
+
 
   const handleSubmit = () => {
     if (addNewPollData.title.length < 9) {
@@ -68,13 +81,13 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
       });
     } else {
       if (props.editedPollTitle && props.createdBy) {
-        dispatch(
-          editPollTitle({
-            title: props.editedPollTitle,
-            createdBy: props.createdBy,
-          })
-        );
-        // dispatch(editPollOptions(addNewPollData.options));
+        
+const dispatchValues: EditedPolltype = {
+  title: addNewPollData.title,
+  idOfPoll:getIdOfPoll,
+  createdBy: props.createdBy,
+}
+dispatch(editPollTitle(dispatchValues));
       } else {
         dispatch(addNewPoll(addNewPollData));
       }
@@ -98,12 +111,24 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
 
   const handleDeleteOption = (index: number) => {
     const updatedOptions = [...addNewPollData.options];
-    updatedOptions.splice(index, 1);
-    setAddNewPollData({
-      ...addNewPollData,
-      options: updatedOptions,
-    });
-  };
+    if(props.editedPollTitle){
+      const deleteOptionId: number| null =updatedOptions[index].id;
+      dispatch(DeleteOptionData(deleteOptionId as number))
+      updatedOptions.splice(index, 1);
+      
+      setAddNewPollData({
+        ...addNewPollData,
+        options: updatedOptions,
+      });
+    }
+    else{
+      updatedOptions.splice(index, 1);
+      setAddNewPollData({
+        ...addNewPollData,
+        options: updatedOptions,
+      });
+    }
+      };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -135,19 +160,30 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
         ...errorMessage,
         optionError: true,
       });
-    } else {
+    }
+    else if(props.editedPollTitle){
       const updatedPoll = JSON.parse(JSON.stringify(addNewPollData));
-      // const updatedPoll = addNewPollData;
       const newOption = {
         id: updatedPoll.option.id || null,
         optionTitle: updatedPoll.option.optionTitle,
       };
       const pollId = updatedPoll.options[0].pollId;
-      console.log(newOption, "newOption", pollId);
       dispatch(editPollOptions({ ...newOption, pollId }));
       updatedPoll.options.push(newOption);
       updatedPoll.option = { optionTitle: "", id: null };
       setAddNewPollData({ ...updatedPoll });
+    } 
+    else {
+      const updatedArray = [
+        ...addNewPollData.options,
+        { optionTitle: addNewPollData.option.optionTitle },
+      ];
+      const newAddedOptions: any = {
+        ...addNewPollData,
+        options: updatedArray,
+        option:{optionTitle:""} ,
+      };
+      setAddNewPollData(newAddedOptions);
     }
   };
   const handleSuccessAddPoll = () => {
@@ -168,7 +204,7 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
         keyboard={false}
       >
         <Modal.Header>
-          <Modal.Title>You have successfully Added a new Poll</Modal.Title>
+          <Modal.Title>Data Saved Successfully</Modal.Title>
         </Modal.Header>
         <Modal.Body>This will redirect you to Polling Page.</Modal.Body>
         <Modal.Footer>

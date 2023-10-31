@@ -3,6 +3,7 @@ import axios from "axios";
 
 interface editedPollTitle {
   title: string;
+  idOfPoll:number;
   createdBy: number;
 }
 interface EditPollOption {
@@ -11,12 +12,12 @@ interface EditPollOption {
   pollId: number;
 }
 export type EditedState = {
-  isSuccess: boolean;
-  isLoading: boolean;
+  titleUpdateLoading:boolean
+  titleUpdateSuccess:boolean;
 };
 const initialState: EditedState = {
-  isSuccess: false,
-  isLoading: false,
+  titleUpdateLoading:false,
+  titleUpdateSuccess:false,
 };
 const baseUrl = process.env.REACT_APP_BASE_URL;
 
@@ -27,8 +28,8 @@ export const editPollTitle = createAsyncThunk(
     const parsedToken = JSON.parse(accessToken as string);
 
     try {
-      const response = await axios.post(
-        `${baseUrl}poll/`,
+      const response = await axios.put(
+        `${baseUrl}poll/${data.idOfPoll}`,
         {
           createdBy: data.createdBy,
           title: data.title,
@@ -51,7 +52,6 @@ export const editPollOptions = createAsyncThunk(
     const accessToken: string | null = localStorage.getItem("userToken");
     const parsedToken = JSON.parse(accessToken as string);
     if (data.id === null) {
-      console.log("12345aa", data);
       try {
         const response = await axios.post(
           `${baseUrl}poll/addPollOption/${data.pollId}`,
@@ -69,7 +69,6 @@ export const editPollOptions = createAsyncThunk(
         throw error;
       }
     } else {
-      console.log(data, "inisde else");
       try {
         const response = await axios.put(
           `${baseUrl}option/edit/${data.id}`,
@@ -95,22 +94,12 @@ const editPollSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(editPollTitle.pending, (state) => {
-      state.isLoading = true;
+      state.titleUpdateLoading = true;
     });
     builder.addCase(editPollTitle.fulfilled, (state) => {
-      state.isSuccess = true;
-      state.isLoading = false;
-    });
-    builder.addCase(editPollOptions.pending, (state) => {
-      // state.isLoading = true;
-      console.log("inside pending");
-    });
-    builder.addCase(editPollOptions.fulfilled, (state) => {
-      // state.isSuccess = true;
-      // state.isLoading = false;
-      console.log("inside fulfilled");
+      state.titleUpdateLoading = false;
+      state.titleUpdateSuccess = true;
     });
   },
 });
-// export const { resetSuccess } = addPollSlice.actions;
 export default editPollSlice.reducer;

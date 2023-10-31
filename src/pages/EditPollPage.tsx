@@ -7,7 +7,7 @@ import { useEffect } from "react";
 interface PollData {
   title: string;
   optionList: any[];
-  createdBy: any;
+  createdBy: number;
 }
 
 const EditPollPage = () => {
@@ -24,7 +24,6 @@ const EditPollPage = () => {
     });
     setFilteredData(dataOfSelectedPoll);
   };
-  console.log("fillll", filteredData);
   return (
     <div>
       {filteredData ? (
