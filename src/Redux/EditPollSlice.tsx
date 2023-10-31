@@ -4,11 +4,12 @@ import axios from "axios";
 interface editedPollTitle {
   title: string;
   createdBy: number;
-  id: number;
 }
-// interface EditPollOption {
-//   options: any;
-// }
+interface EditPollOption {
+  optionTitle: string;
+  id: number;
+  pollId: number;
+}
 export type EditedState = {
   isSuccess: boolean;
   isLoading: boolean;
@@ -27,7 +28,7 @@ export const editPollTitle = createAsyncThunk(
 
     try {
       const response = await axios.post(
-        `${baseUrl}poll/${data.id}`,
+        `${baseUrl}poll/`,
         {
           createdBy: data.createdBy,
           title: data.title,
@@ -46,26 +47,46 @@ export const editPollTitle = createAsyncThunk(
 );
 export const editPollOptions = createAsyncThunk(
   "editPollOptions",
-  async (data: any) => {
+  async (data: EditPollOption) => {
     const accessToken: string | null = localStorage.getItem("userToken");
     const parsedToken = JSON.parse(accessToken as string);
-    console.log("12345aa", { data });
-    const axiosPromises = data.map((item: any) => {
-      console.log(item.id, "id delhioo");
-      return axios.put(`${baseUrl}option/edit/${item.id}`, item.optionTitle, {
-        headers: {
-          token: parsedToken,
-        },
-      });
-    });
-    return axios
-      .all(axiosPromises)
-      .then((responses) => {
-        return responses;
-      })
-      .catch((error) => {
+    if (data.id === null) {
+      console.log("12345aa", data);
+      try {
+        const response = await axios.post(
+          `${baseUrl}poll/addPollOption/${data.pollId}`,
+          {
+            optionTitle: data.optionTitle,
+          },
+          {
+            headers: {
+              token: parsedToken,
+            },
+          }
+        );
+        return response;
+      } catch (error) {
         throw error;
-      });
+      }
+    } else {
+      console.log(data, "inisde else");
+      try {
+        const response = await axios.put(
+          `${baseUrl}option/edit/${data.id}`,
+          {
+            optionTitle: data.optionTitle,
+          },
+          {
+            headers: {
+              token: parsedToken,
+            },
+          }
+        );
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    }
   }
 );
 const editPollSlice = createSlice({

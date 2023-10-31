@@ -11,11 +11,13 @@ import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import { editPollTitle, editPollOptions } from "../redux/EditPollSlice";
+// import { editPollTitle } from "../redux/EditPollSlice";
 
 interface PollData {
   title: string;
-  option: string;
-  options: { optionTitle: string }[];
+  option: { optionTitle: string; id: number | null };
+  options: { optionTitle: string; id: number | null }[];
+  id: number | null;
 }
 interface MessageError {
   titleError: boolean;
@@ -23,16 +25,17 @@ interface MessageError {
   optionSize: boolean;
 }
 interface PollModalProps {
-  editedPollTitle?: any;
+  editedPollTitle?: string;
   editedOptionList?: any;
-  createdBy?: any;
+  createdBy?: number;
 }
 const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
   const [showModal, setShowModal] = useState(false);
   const [addNewPollData, setAddNewPollData] = useState<PollData>({
     title: props.editedPollTitle ?? "",
-    option: "",
+    option: { optionTitle: "", id: null },
     options: props.editedOptionList || [],
+    id: null,
   });
   const [errorMessage, setErrorMessage] = useState<MessageError>({
     titleError: false,
@@ -69,10 +72,9 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
           editPollTitle({
             title: props.editedPollTitle,
             createdBy: props.createdBy,
-            id: getIdOfPoll.id,
           })
         );
-        dispatch(editPollOptions(addNewPollData.options));
+        // dispatch(editPollOptions(addNewPollData.options));
       } else {
         dispatch(addNewPoll(addNewPollData));
       }
@@ -80,16 +82,16 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
   };
   const handleEdit = (index: number) => {
     const optionToEdit = addNewPollData.options[index];
-    const updatedEdit = {
-      ...addNewPollData,
-      option: optionToEdit.optionTitle,
-    };
-    setAddNewPollData(updatedEdit);
     const updatedOptions = [...addNewPollData.options];
+    const editedOption = {
+      optionTitle: optionToEdit.optionTitle,
+      id: optionToEdit.id,
+    };
     updatedOptions.splice(index, 1);
 
     setAddNewPollData({
-      ...updatedEdit,
+      ...addNewPollData,
+      option: editedOption,
       options: updatedOptions,
     });
   };
@@ -106,40 +108,46 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const key = e.target.id;
-    setAddNewPollData({
-      ...addNewPollData,
-      [key]: value,
-    });
-    if (key === "option") {
-      setErrorMessage({
-        ...errorMessage,
-        optionError: false,
+    if (key === "title") {
+      setAddNewPollData({
+        ...addNewPollData,
+        title: value,
       });
-    } else if (key === "title") {
       setErrorMessage({
         ...errorMessage,
         titleError: false,
+      });
+    } else if (key === "option") {
+      setAddNewPollData({
+        ...addNewPollData,
+        option: { id: addNewPollData.option.id, optionTitle: value },
+      });
+      setErrorMessage({
+        ...errorMessage,
+        optionError: false,
       });
     }
   };
 
   const handleAddOptions = () => {
-    if (addNewPollData.option.trim() === "") {
+    if (addNewPollData.option.optionTitle.trim() === "") {
       setErrorMessage({
         ...errorMessage,
         optionError: true,
       });
     } else {
-      const updatedArray = [
-        ...addNewPollData.options,
-        { optionTitle: addNewPollData.option },
-      ];
-      const newAddedOptions = {
-        ...addNewPollData,
-        options: updatedArray,
-        option: "",
+      const updatedPoll = JSON.parse(JSON.stringify(addNewPollData));
+      // const updatedPoll = addNewPollData;
+      const newOption = {
+        id: updatedPoll.option.id || null,
+        optionTitle: updatedPoll.option.optionTitle,
       };
-      setAddNewPollData(newAddedOptions);
+      const pollId = updatedPoll.options[0].pollId;
+      console.log(newOption, "newOption", pollId);
+      dispatch(editPollOptions({ ...newOption, pollId }));
+      updatedPoll.options.push(newOption);
+      updatedPoll.option = { optionTitle: "", id: null };
+      setAddNewPollData({ ...updatedPoll });
     }
   };
   const handleSuccessAddPoll = () => {
@@ -188,7 +196,7 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
             <Form.Control
               id="option"
               onChange={handleChange}
-              value={addNewPollData.option}
+              value={addNewPollData.option.optionTitle}
               placeholder="Enter Option"
               onKeyPress={handleKeyPress}
             />
@@ -199,7 +207,7 @@ const PollModal: React.FC<PollModalProps> = (props: PollModalProps) => {
         </div>
         <div className="TotalOptionList">
           {addNewPollData.options.map((item: any, index: number) => (
-            <span className="displayOptions">
+            <span className="displayOptions" key={index}>
               {item.optionTitle}
               <AiFillEdit onClick={() => handleEdit(index)} />
               <AiFillDelete onClick={() => handleDeleteOption(index)} />
