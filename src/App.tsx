@@ -1,17 +1,14 @@
 import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignupPage";
 import PollingPage from "./pages/PollingPage";
 import ProtectedRoute from "./ProtectedRoute";
-import AddPollPage from "./pages/AddPollPage";
+import AddEditPollPage from "./pages/AddEditPollPage";
 import CreateUserPage from "./pages/CreateUserPage";
 import ListUserPage from "./pages/ListUserPage";
 import ViewPollPage from "./pages/ViewPollPage";
-import EditPollPage from "./pages/EditPollPage";
 import Navbar from "./components/Navbar";
 const App: React.FC = () => {
   return (
@@ -39,24 +36,16 @@ const App: React.FC = () => {
         <Route
           path="/addPoll"
           element={
-            <ProtectedRoute Component={AddPollPage} redirectTo="/addPoll" />
+            <ProtectedRoute Component={AddEditPollPage} redirectTo="/addPoll" />
           }
         />
         <Route
           path="/createUser"
           element={
-            <ProtectedRoute
-              Component={CreateUserPage}
-              redirectTo="/createUser"
-            />
+            <ProtectedRoute Component={CreateUserPage} redirectTo="/polling" />
           }
         />
-        <Route
-          path="/editPoll"
-          element={
-            <ProtectedRoute Component={EditPollPage} redirectTo="/editPoll" />
-          }
-        />
+        <Route path="/editPoll/:id" element={<AddEditPollPage />} />
         <Route
           path="/viewPoll"
           element={

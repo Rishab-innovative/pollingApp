@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPollList, addId } from "../redux/PollListSlice";
+import { fetchPollList } from "../redux/PollListSlice";
 import { useNavigate } from "react-router-dom";
 import "../css/PollListPage.css";
 import { DeletePollData } from "../redux/DeletePollSlice";
@@ -90,8 +90,7 @@ const PollingPage: React.FC = () => {
     }
   };
   const handleEditPoll = (id: number) => {
-    navigate("/editPoll");
-    dispatch(addId(id));
+    navigate(`/editPoll/${id}`);
   };
   return (
     <>

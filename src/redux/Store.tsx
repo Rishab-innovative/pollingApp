@@ -1,18 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import SignUpSlice from "./SignUpSlice";
 import LoginSlice from "./LoginSlice";
+import editPollSlice from "./EditPollSlice";
 import PollListSlice from "./PollListSlice";
 import addPollSlice from "./AddPollSlice";
-import editPollSlice from "./EditPollSlice";
 import { combineReducers } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage";
-import { persistReducer } from "redux-persist";
 
-const persistConfig = {
-  key: "root",
-  version: 1,
-  storage,
-};
 const rootReducer = combineReducers({
   signUp: SignUpSlice,
   logIn: LoginSlice,
@@ -20,10 +13,8 @@ const rootReducer = combineReducers({
   addPoll: addPollSlice,
   editPoll:editPollSlice,
 });
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,

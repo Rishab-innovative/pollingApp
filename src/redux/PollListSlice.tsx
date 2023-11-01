@@ -22,19 +22,18 @@ export const fetchPollList = createAsyncThunk(
     }
   }
 );
+
 export type PollListState = {
   isLoading: boolean;
   data: string[];
   isError: boolean;
   size: number;
-  id: number;
 };
 const initialState: PollListState = {
   isLoading: false,
   data: [],
   isError: false,
   size: 0,
-  id: 0,
 };
 const PollListSlice = createSlice({
   name: "PollListData",
@@ -42,9 +41,6 @@ const PollListSlice = createSlice({
   reducers: {
     emptyPollList: (state) => {
       state.size = 0;
-    },
-    addId: (state, action) => {
-      state.id = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -61,5 +57,5 @@ const PollListSlice = createSlice({
     });
   },
 });
-export const { emptyPollList, addId } = PollListSlice.actions;
+export const { emptyPollList } = PollListSlice.actions;
 export default PollListSlice.reducer;

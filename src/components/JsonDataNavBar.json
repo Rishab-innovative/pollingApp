@@ -4,12 +4,14 @@
         "path": "/polling"
     },
     {
-        "label": "Add Polls",
+        "label": "Add Poll",
         "path": "/addPoll"
-    }, {
+    },
+    {
         "label": "Create User",
         "path": "/createUser"
-    }, {
+    },
+    {
         "label": "List User",
         "path": "/listUser"
     }
