@@ -95,7 +95,7 @@ export const editPollOptions = createAsyncThunk(
     } else {
       try {
         const response = await axios.put(
-          `${baseUrl}option/edit/${data.pollId}`,
+          `${baseUrl}option/edit/${data.optionId}`,
           {
             optionTitle: data.optionTitle,
           },

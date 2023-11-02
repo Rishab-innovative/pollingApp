@@ -4,23 +4,37 @@ import { useNavigate } from "react-router-dom";
 
 interface ProtectedProps {
   Component: React.FC;
-  redirectTo: string;
+  redirectTo?: string;
+  isAdmin?: Boolean;
 }
 
 const ProtectedRoute: React.FC<ProtectedProps> = ({
   Component,
   redirectTo,
+  isAdmin,
 }) => {
   const navigate = useNavigate();
-
   useEffect(() => {
-    let login = localStorage.getItem("userToken");
+    const accessToken: string | null = localStorage.getItem("userToken");
+    const login = JSON.parse(accessToken as string);
+
+    const accessData: string | null = localStorage.getItem("userData");
+    const role = JSON.parse(accessData as string);
+
     if (login) {
-      redirectTo === "/signup" ? navigate("/polling") : navigate(redirectTo);
-    } else if (!login && redirectTo === "/signup") {
-      navigate(redirectTo);
+      if (role.roleId !== 1 && isAdmin) {
+        if (redirectTo === "/viewPoll") {
+          navigate("/viewPoll");
+        } else {
+          navigate("/polling");
+        }
+      } else {
+        if (redirectTo === "/signup" || redirectTo === "/") {
+          navigate("/polling");
+        }
+      }
     } else {
-      navigate("/");
+      navigate(redirectTo === "/signup" ? "/signup" : "/");
     }
   }, [navigate, redirectTo]);
 

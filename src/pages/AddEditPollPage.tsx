@@ -102,21 +102,20 @@ const PollModal: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (singleUserInfo.title && idAsNumber) {
+    if (singleUserInfo.title) {
       setAddNewPollData((prevState) => ({
         ...prevState,
         title: singleUserInfo.title,
       }));
     }
 
-    if (singleUserInfo.optionList && idAsNumber) {
+    if (singleUserInfo.optionList) {
       setAddNewPollData((prevState) => ({
         ...prevState,
         options: singleUserInfo.optionList,
       }));
     }
   }, [singleUserInfo, dispatch]);
-
   useEffect(() => {
     if (!idAsNumber) return;
     dispatch(getSinglePoll(idAsNumber));
@@ -183,7 +182,7 @@ const PollModal: React.FC = () => {
   };
 
   const handleAddOptions = () => {
-    if (addNewPollData.title.trim() === "") {
+    if (addNewPollData.option.optionTitle.trim() === "") {
       setErrorMessage({
         ...errorMessage,
         optionError: true,

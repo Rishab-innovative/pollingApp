@@ -17,9 +17,7 @@ const App: React.FC = () => {
       <Routes>
         <Route
           path="/"
-          element={
-            <ProtectedRoute Component={LoginPage} redirectTo="/polling" />
-          }
+          element={<ProtectedRoute Component={LoginPage} redirectTo="/" />}
         />
         <Route
           path="/signup"
@@ -42,10 +40,23 @@ const App: React.FC = () => {
         <Route
           path="/createUser"
           element={
-            <ProtectedRoute Component={CreateUserPage} redirectTo="/polling" />
+            <ProtectedRoute
+              Component={CreateUserPage}
+              redirectTo="/createUser"
+            />
           }
         />
-        <Route path="/editPoll/:id" element={<AddEditPollPage />} />
+        <Route
+          path="/editPoll/:id"
+          element={
+            <ProtectedRoute
+              Component={AddEditPollPage}
+              redirectTo="/editPoll"
+              isAdmin={true}
+            />
+          }
+        />
+
         <Route
           path="/viewPoll"
           element={
@@ -58,8 +69,16 @@ const App: React.FC = () => {
             <ProtectedRoute Component={ListUserPage} redirectTo="/listUser" />
           }
         />
+        <Route path="/*" element={<DefaultComponent />} />
       </Routes>
     </BrowserRouter>
+  );
+};
+const DefaultComponent = () => {
+  return (
+    <div>
+      <h1>Wrong routed page Found</h1>
+    </div>
   );
 };
 export default App;
