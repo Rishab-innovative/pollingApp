@@ -31,7 +31,7 @@ const ViewPollPage = () => {
             className="polling-spinner"
           />
         ) : (
-          <Card style={{ width: "fit-content", textAlign: "center" }}>
+          <Card style={{ width: "40vw", textAlign: "center" }}>
             <Card.Body>
               <Card.Title style={{ textAlign: "center" }}>
                 {singleUserInfo.title}
