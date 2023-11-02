@@ -140,7 +140,7 @@ const PollingPage: React.FC = () => {
                       <AiOutlineBarChart />
                     </>
                   ) : (
-                    <BiExpand />
+                    <BiExpand onClick={() => handleViewPoll(item.id)} />
                   )}
                 </Card.Title>
               </Card.Body>
