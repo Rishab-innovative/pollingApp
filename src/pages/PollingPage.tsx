@@ -148,8 +148,9 @@ const PollingPage: React.FC = () => {
                 <ListGroup variant="flush" key={option.title}>
                   <ListGroup.Item>
                     <Form.Check
-                      type={"checkbox"}
+                      type="radio"
                       label={option.optionTitle}
+                      name={item.title}
                       disabled={hasVotedMap[item.title]}
                       onChange={() => handleVote(option.optionTitle)}
                     />
