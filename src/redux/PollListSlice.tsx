@@ -21,7 +21,8 @@ export const fetchPollList = createAsyncThunk(
       throw error;
     }
   }
-);  
+);
+
 export type PollListState = {
   isLoading: boolean;
   data: string[];
@@ -38,9 +39,9 @@ const PollListSlice = createSlice({
   name: "PollListData",
   initialState,
   reducers: {
-    emptyPollList:(state)=>{
-      state.size=0;
-    } 
+    emptyPollList: (state) => {
+      state.size = 0;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchPollList.fulfilled, (state, action) => {
@@ -56,5 +57,5 @@ const PollListSlice = createSlice({
     });
   },
 });
-export const { emptyPollList } =PollListSlice.actions;
+export const { emptyPollList } = PollListSlice.actions;
 export default PollListSlice.reducer;

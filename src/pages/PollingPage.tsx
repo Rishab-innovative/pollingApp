@@ -89,6 +89,9 @@ const PollingPage: React.FC = () => {
       }));
     }
   };
+  const handleEditPoll = (id: number) => {
+    navigate(`/editPoll/${id}`);
+  };
   return (
     <>
       {polls.isLoading === true ? (
@@ -129,7 +132,7 @@ const PollingPage: React.FC = () => {
                   {item.title}
                   {userRole === 1 ? (
                     <>
-                      <AiFillEdit onClick={() => navigate("/editPoll")} />
+                      <AiFillEdit onClick={() => handleEditPoll(item.id)} />
                       <AiFillDelete
                         onClick={() => handleDelete(item.id, index)}
                       />

@@ -1,17 +1,14 @@
 import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignupPage";
 import PollingPage from "./pages/PollingPage";
 import ProtectedRoute from "./ProtectedRoute";
-import AddPollPage from "./pages/AddPollPage";
+import AddEditPollPage from "./pages/AddEditPollPage";
 import CreateUserPage from "./pages/CreateUserPage";
 import ListUserPage from "./pages/ListUserPage";
 import ViewPollPage from "./pages/ViewPollPage";
-// import EditPollPage from "./pages/EditPollPage";
 import Navbar from "./components/Navbar";
 const App: React.FC = () => {
   return (
@@ -20,9 +17,7 @@ const App: React.FC = () => {
       <Routes>
         <Route
           path="/"
-          element={
-            <ProtectedRoute Component={LoginPage} redirectTo="/polling" />
-          }
+          element={<ProtectedRoute Component={LoginPage} redirectTo="/" />}
         />
         <Route
           path="/signup"
@@ -39,7 +34,7 @@ const App: React.FC = () => {
         <Route
           path="/addPoll"
           element={
-            <ProtectedRoute Component={AddPollPage} redirectTo="/addPoll" />
+            <ProtectedRoute Component={AddEditPollPage} redirectTo="/addPoll" />
           }
         />
         <Route
@@ -51,15 +46,17 @@ const App: React.FC = () => {
             />
           }
         />
-            {/* <Route
-          path="/editPoll"
+        <Route
+          path="/editPoll/:id"
           element={
             <ProtectedRoute
-              Component={EditPollPage}
+              Component={AddEditPollPage}
               redirectTo="/editPoll"
+              isAdmin={true}
             />
           }
-        /> */}
+        />
+
         <Route
           path="/viewPoll"
           element={
@@ -72,8 +69,16 @@ const App: React.FC = () => {
             <ProtectedRoute Component={ListUserPage} redirectTo="/listUser" />
           }
         />
+        <Route path="/*" element={<DefaultComponent />} />
       </Routes>
     </BrowserRouter>
+  );
+};
+const DefaultComponent = () => {
+  return (
+    <div>
+      <h1>Wrong routed page Found</h1>
+    </div>
   );
 };
 export default App;

@@ -54,8 +54,10 @@
 
 .success-signUp-btn {
     background-color: green;
+    border-radius:5px;
     color: white;
     padding: 0.5rem 1rem;
+    cursor:pointer;
 }
 
 .form-footer {

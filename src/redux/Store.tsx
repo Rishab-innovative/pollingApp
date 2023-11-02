@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import SignUpSlice from "./SignUpSlice";
 import LoginSlice from "./LoginSlice";
+import editPollSlice from "./EditPollSlice";
 import PollListSlice from "./PollListSlice";
 import addPollSlice from "./AddPollSlice";
 import { combineReducers } from "@reduxjs/toolkit";
@@ -10,6 +11,7 @@ const rootReducer = combineReducers({
   logIn: LoginSlice,
   pollList: PollListSlice,
   addPoll: addPollSlice,
+  editPoll:editPollSlice,
 });
 export const store = configureStore({
   reducer: rootReducer,
