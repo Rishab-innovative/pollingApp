@@ -51,18 +51,13 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute
               Component={AddEditPollPage}
-              redirectTo="/editPoll"
+              redirectTo="/editPoll/"
               isAdmin={true}
             />
           }
         />
+        <Route path="/viewPoll/:id" element={<ViewPollPage />} />
 
-        <Route
-          path="/viewPoll"
-          element={
-            <ProtectedRoute Component={ViewPollPage} redirectTo="/viewPoll" />
-          }
-        />
         <Route
           path="/listUser"
           element={

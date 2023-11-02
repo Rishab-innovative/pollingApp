@@ -49,7 +49,7 @@ const PollingPage: React.FC = () => {
     }
   }, [polls.data]);
   const handleViewPoll = (id: number) => {
-    navigate("/viewPoll");
+    navigate(`/viewPoll/${id}`);
   };
 
   const handleDelete = (id: number, index: number) => {
