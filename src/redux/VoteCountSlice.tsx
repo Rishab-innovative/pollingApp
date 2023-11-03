@@ -35,12 +35,7 @@ export const updateVote = createAsyncThunk(
 const updateVoteSlice = createSlice({
   name: "updateVoteSlice",
   initialState,
-  reducers: {
-    // deleteSingleUserData: (state) => {
-    //   state.singleUserData = {};
-    //   state.titleUpdateSuccess = false;
-    // },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(updateVote.pending, (state) => {
       state.updateVotePending = true;

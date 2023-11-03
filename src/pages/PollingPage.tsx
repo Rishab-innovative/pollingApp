@@ -29,7 +29,7 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 const PollingPage: React.FC = () => {
   const navigate = useNavigate();
   const polls = useSelector((state: RootState) => state.pollList);
-  const [singlePollInformationData, setSinglePollInformationData] = useState({
+  const [updateChartData, setUpdateChartData] = useState({
     labels: [],
     datasets: [
       {
@@ -128,19 +128,13 @@ const PollingPage: React.FC = () => {
     }
   }, []);
 
-  const handleViewPollVoteChart = (idOfSelectedPoll: number) => {
-    const dataOfSelectedPoll: any = polls.data.filter((data: any) => {
-      return data.id === idOfSelectedPoll;
-    });
-    const updatedInfo = dataOfSelectedPoll[0];
-    setSinglePollInformationData({
-      labels: updatedInfo.optionList.map((items: any) => items.optionTitle),
+  const handleViewPollVoteChart = (pollData: any) => {
+    setUpdateChartData({
+      labels: pollData.optionList.map((items: any) => items.optionTitle),
       datasets: [
         {
-          label: updatedInfo.title,
-          data: updatedInfo.optionList.map(
-            (items: any) => items.voteCount.length
-          ),
+          label: pollData.title,
+          data: pollData.optionList.map((items: any) => items.voteCount.length),
 
           backgroundColor: "rgb(0, 137, 167)",
         },
@@ -194,7 +188,7 @@ const PollingPage: React.FC = () => {
                       />
                       <BiExpand onClick={() => handleViewPoll(item.id)} />
                       <AiOutlineBarChart
-                        onClick={() => handleViewPollVoteChart(item.id)}
+                        onClick={() => handleViewPollVoteChart(item)}
                       />
                     </>
                   ) : (
@@ -250,10 +244,7 @@ const PollingPage: React.FC = () => {
             aria-labelledby="contained-modal-title-vcenter"
             centered
           >
-            <Bar
-              data={singlePollInformationData}
-              options={{ indexAxis: "y" }}
-            ></Bar>
+            <Bar data={updateChartData} options={{ indexAxis: "y" }}></Bar>
           </Modal>
         </div>
       )}
