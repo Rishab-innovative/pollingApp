@@ -2,6 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPollList } from "../redux/PollListSlice";
 import { useNavigate } from "react-router-dom";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  Tooltip,
+  LinearScale,
+  Legend,
+} from "chart.js";
 import "../css/PollListPage.css";
 import { DeletePollData } from "../redux/DeletePollSlice";
 import { AppDispatchType, RootState } from "../redux/Store";
@@ -10,15 +19,28 @@ import { Button, Card, Form, ListGroup, Spinner } from "react-bootstrap";
 import { BiExpand } from "react-icons/bi";
 import { AiOutlineBarChart } from "react-icons/ai";
 import Modal from "react-bootstrap/Modal";
-
+import { updateVote } from "../redux/VoteCountSlice";
 interface DeletePollType {
   id: number;
   index: number;
 }
+
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 const PollingPage: React.FC = () => {
   const navigate = useNavigate();
   const polls = useSelector((state: RootState) => state.pollList);
-  const [votedItems, setVotedItems] = useState<string[]>([]);
+  const [singlePollInformationData, setSinglePollInformationData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "",
+        data: [],
+        backgroundColor: "",
+      },
+    ],
+  });
+
+  const [votedItems, setVotedItems] = useState<number>();
   const [pagenumber, setNumber] = useState<number>(1);
   const [userRole, setUserRole] = useState<number>();
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
@@ -30,14 +52,17 @@ const PollingPage: React.FC = () => {
     {}
   );
   const [totalPolls, setTotalPolls] = useState<any>([]);
+  const [displayPollChart, setDisplayPollChart] = useState(false);
   const dispatch = useDispatch<AppDispatchType>();
+
   useEffect(() => {
     dispatch(fetchPollList(pagenumber));
     const userDataFromLocalStorage = localStorage.getItem("userData");
     if (userDataFromLocalStorage) {
       setUserRole(JSON.parse(userDataFromLocalStorage).roleId);
     }
-  }, [pagenumber]);
+  }, [pagenumber, hasVotedMap]);
+
   useEffect(() => {
     if (pagenumber !== 1) {
       setTotalPolls((prevTotalPolls: any) => [
@@ -48,6 +73,7 @@ const PollingPage: React.FC = () => {
       setTotalPolls([...polls.data]);
     }
   }, [polls.data]);
+
   const handleViewPoll = (id: number) => {
     navigate(`/viewPoll/${id}`);
   };
@@ -67,30 +93,60 @@ const PollingPage: React.FC = () => {
     setTotalPolls([...deletePoll]);
     setShowDeleteModal(false);
   };
-
-  const handleVote = (itemTitle: string) => {
-    setVotedItems((prevVotedItems) => [...prevVotedItems, itemTitle]);
+  const handleVote = (optionId: number) => {
+    setVotedItems(optionId);
   };
   const handleSubmitVote = (pollTitle: string) => {
-    if (votedItems.length === 1) {
+    if (votedItems) {
       setHasVotedMap((prevHasVotedMap) => ({
         ...prevHasVotedMap,
         [pollTitle]: true,
       }));
-    } else if (votedItems.length > 1) {
-      setHasVotedMap((prevHasVotedMap) => ({
-        ...prevHasVotedMap,
-        [pollTitle]: true,
-      }));
+      dispatch(updateVote(votedItems));
+      localStorage.setItem(
+        "VotedItems",
+        JSON.stringify({ ...hasVotedMap, [pollTitle]: true })
+      );
     } else {
       setHasVotedMap((prevHasVotedMap) => ({
         ...prevHasVotedMap,
         [pollTitle]: false,
       }));
+      localStorage.setItem(
+        "VotedItems",
+        JSON.stringify({ ...hasVotedMap, [pollTitle]: false })
+      );
     }
   };
   const handleEditPoll = (id: number) => {
     navigate(`/editPoll/${id}`);
+  };
+  useEffect(() => {
+    const storedVotedItems = localStorage.getItem("VotedItems");
+    if (storedVotedItems) {
+      setHasVotedMap(JSON.parse(storedVotedItems));
+    }
+  }, []);
+
+  const handleViewPollVoteChart = (idOfSelectedPoll: number) => {
+    const dataOfSelectedPoll: any = polls.data.filter((data: any) => {
+      return data.id === idOfSelectedPoll;
+    });
+    const updatedInfo = dataOfSelectedPoll[0];
+    setSinglePollInformationData({
+      labels: updatedInfo.optionList.map((items: any) => items.optionTitle),
+      datasets: [
+        {
+          label: updatedInfo.title,
+          data: updatedInfo.optionList.map(
+            (items: any) => items.voteCount.length
+          ),
+
+          backgroundColor: "rgb(0, 137, 167)",
+        },
+      ],
+    });
+    setDisplayPollChart(true);
   };
   return (
     <>
@@ -137,7 +193,9 @@ const PollingPage: React.FC = () => {
                         onClick={() => handleDelete(item.id, index)}
                       />
                       <BiExpand onClick={() => handleViewPoll(item.id)} />
-                      <AiOutlineBarChart />
+                      <AiOutlineBarChart
+                        onClick={() => handleViewPollVoteChart(item.id)}
+                      />
                     </>
                   ) : (
                     <BiExpand onClick={() => handleViewPoll(item.id)} />
@@ -152,7 +210,7 @@ const PollingPage: React.FC = () => {
                       label={option.optionTitle}
                       name={item.title}
                       disabled={hasVotedMap[item.title]}
-                      onChange={() => handleVote(option.optionTitle)}
+                      onChange={() => handleVote(option.id)}
                     />
                   </ListGroup.Item>
                 </ListGroup>
@@ -185,6 +243,18 @@ const PollingPage: React.FC = () => {
               Load More..
             </Button>
           )}
+          <Modal
+            show={displayPollChart}
+            onHide={() => setDisplayPollChart(false)}
+            animation={false}
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+          >
+            <Bar
+              data={singlePollInformationData}
+              options={{ indexAxis: "y" }}
+            ></Bar>
+          </Modal>
         </div>
       )}
     </>
