@@ -42,12 +42,6 @@ interface ChartDataType {
     }
   ];
 }
-interface OptionItems {
-  optionTitle: string;
-  pollId: number;
-  id: number;
-  voteCount: number[];
-}
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 const PollingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -156,7 +150,6 @@ const PollingPage: React.FC = () => {
       ({ optionTitle, voteCount }) => ({ optionTitle, voteCount })
     );
     const labels = modifiedOptionList.map((items) => items.optionTitle);
-    console.log(pollData.optionList, "elloo");
     setUpdateChartData({
       labels: labels,
       datasets: [
