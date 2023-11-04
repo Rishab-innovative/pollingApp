@@ -29,6 +29,10 @@ const initialState: SignUpState = {
   isError: false,
   status: 0,
 };
+
+const accessToken: string | null = localStorage.getItem("userToken");
+const parsedToken = JSON.parse(accessToken as string);
+
 const base_URL = process.env.REACT_APP_BASE_URL;
 export const fetchUserRoles = createAsyncThunk("fetchUserRoles", async () => {
   const response = await axios.get(`${base_URL}role/list`);
@@ -38,6 +42,17 @@ export const signUpUserData = createAsyncThunk(
   "signUpUserData",
   async (data: signUpPageInputData) => {
     const response = await axios.post(`${base_URL}user/register`, data);
+    return response;
+  }
+);
+export const createUser = createAsyncThunk(
+  "createUser",
+  async (data: signUpPageInputData) => {
+    const response = await axios.post(`${base_URL}user/create`, data, {
+      headers: {
+        token: parsedToken,
+      },
+    });
     return response;
   }
 );
@@ -67,6 +82,16 @@ const SignUpSlice = createSlice({
       state.status = action.payload.status;
     });
     builder.addCase(signUpUserData.rejected, (state) => {
+      state.isError = true;
+      state.isLoading = false;
+    });
+    builder.addCase(createUser.fulfilled, (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(createUser.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(createUser.rejected, (state) => {
       state.isError = true;
       state.isLoading = false;
     });
