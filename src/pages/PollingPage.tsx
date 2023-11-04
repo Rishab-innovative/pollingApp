@@ -24,12 +24,35 @@ interface DeletePollType {
   id: number;
   index: number;
 }
-
+interface pollDataType {
+  createdAt: string;
+  createdBy: number;
+  id: number;
+  optionList: Array<{ optionTitle: string; voteCount: number[] }>;
+  title: string;
+  updatedAt: string;
+}
+interface ChartDataType {
+  labels: string[];
+  datasets: [
+    {
+      label: string;
+      data: number[];
+      backgroundColor: string;
+    }
+  ];
+}
+interface OptionItems {
+  optionTitle: string;
+  pollId: number;
+  id: number;
+  voteCount: number[];
+}
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 const PollingPage: React.FC = () => {
   const navigate = useNavigate();
   const polls = useSelector((state: RootState) => state.pollList);
-  const [updateChartData, setUpdateChartData] = useState({
+  const [updateChartData, setUpdateChartData] = useState<ChartDataType>({
     labels: [],
     datasets: [
       {
@@ -128,13 +151,18 @@ const PollingPage: React.FC = () => {
     }
   }, []);
 
-  const handleViewPollVoteChart = (pollData: any) => {
+  const handleViewPollVoteChart = (pollData: pollDataType) => {
+    const modifiedOptionList = pollData.optionList.map(
+      ({ optionTitle, voteCount }) => ({ optionTitle, voteCount })
+    );
+    const labels = modifiedOptionList.map((items) => items.optionTitle);
+    console.log(pollData.optionList, "elloo");
     setUpdateChartData({
-      labels: pollData.optionList.map((items: any) => items.optionTitle),
+      labels: labels,
       datasets: [
         {
           label: pollData.title,
-          data: pollData.optionList.map((items: any) => items.voteCount.length),
+          data: modifiedOptionList.map((items) => items.voteCount.length),
 
           backgroundColor: "rgb(0, 137, 167)",
         },
