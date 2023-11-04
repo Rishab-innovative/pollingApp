@@ -1,8 +1,5 @@
+import SignUpModal from "../components/SignUpModal";
 const CreateUserPage: React.FC = () => {
-  return (
-    <>
-      <div>THis is CreateUser Page</div>
-    </>
-  );
+  return <SignUpModal />;
 };
 export default CreateUserPage;
