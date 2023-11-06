@@ -36,11 +36,7 @@ export const userList = createAsyncThunk("userList", async (data: userType) => {
 const ListUserSlice = createSlice({
   name: "userListSlice",
   initialState,
-  reducers: {
-    // emptyPollList: (state) => {
-    //   state.size = 0;
-    // },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(userList.fulfilled, (state, action) => {
       state.isLoading = false;
@@ -51,5 +47,4 @@ const ListUserSlice = createSlice({
     });
   },
 });
-// export const { emptyPollList } = PollListSlice.actions;
 export default ListUserSlice.reducer;
