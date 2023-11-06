@@ -52,6 +52,13 @@ const ListUserPage: React.FC = () => {
       page: prevPageInfo.page - 1,
     }));
   };
+  const handlePageNumber = (e: any) => {
+    const pageNumber = parseInt(e.target.innerText, 10);
+    setPageInfo({
+      ...pageInfo,
+      page: pageNumber,
+    });
+  };
   return (
     <>
       {userListData.isLoading === true ? (
@@ -100,9 +107,15 @@ const ListUserPage: React.FC = () => {
             <span>
               <Pagination>
                 <Pagination.Prev onClick={handlePrevPageChange} />
-                <Pagination.Item active>{pageInfo.page}</Pagination.Item>
-                <Pagination.Item>{pageInfo.page + 1}</Pagination.Item>
-                <Pagination.Item>{pageInfo.page + 2}</Pagination.Item>
+                <Pagination.Item active onClick={handlePageNumber}>
+                  {pageInfo.page}
+                </Pagination.Item>
+                <Pagination.Item onClick={handlePageNumber}>
+                  {pageInfo.page + 1}
+                </Pagination.Item>
+                <Pagination.Item onClick={handlePageNumber}>
+                  {pageInfo.page + 2}
+                </Pagination.Item>
                 <Pagination.Next onClick={handleNextPageChange} />
               </Pagination>
             </span>
